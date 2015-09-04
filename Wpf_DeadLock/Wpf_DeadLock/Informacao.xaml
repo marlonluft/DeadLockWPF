@@ -1,0 +1,25 @@
+﻿<Window x:Class="Wpf_DeadLock.Informacao"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DeadLock - Marlon Luft Salvador" Height="572" Width="654" WindowStartupLocation="CenterScreen" Icon="/Wpf_DeadLock;component/Images/Untitled.png" MinHeight="475" MinWidth="654" ResizeMode="CanMinimize">
+    <Grid>
+        <Label Content="Recursos 1" Height="28" HorizontalAlignment="Left" Margin="12,12,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="Processo 1" Height="28" HorizontalAlignment="Left" Margin="337,12,0,0" Name="label2" VerticalAlignment="Top" />
+        <Button Content="+" Height="23" HorizontalAlignment="Left" Margin="241,13,0,0" Name="btnRecursosMais" VerticalAlignment="Top" Width="24" Click="btnRecursosMais_Click" />
+        <Button Content="+" Height="23" HorizontalAlignment="Left" Margin="566,12,0,0" Name="btnProcessoMais" VerticalAlignment="Top" Width="24" Click="btnProcessoMais_Click" />
+        <Button Content="-" Height="23" HorizontalAlignment="Left" Margin="271,12,0,0" Name="btnRecursosMenos" VerticalAlignment="Top" Width="24" Click="btnRecursosMenos_Click" />
+        <Button Content="-" Height="23" HorizontalAlignment="Left" Margin="596,12,0,0" Name="btnProcessoMenos" VerticalAlignment="Top" Width="24" Click="btnProcessoMenos_Click" />
+        <Label Content="Recursos 2" Height="28" HorizontalAlignment="Left" Margin="12,225,0,0" Name="label3" VerticalAlignment="Top" />
+        <Button Content="+" Height="23" HorizontalAlignment="Left" Margin="241,226,0,0" Name="btnRecursosMais2" VerticalAlignment="Top" Width="24" Click="btnRecursosMais2_Click" />
+        <Button Content="+" Height="23" HorizontalAlignment="Left" Margin="566,226,0,0" Name="btnProcessoMais2" VerticalAlignment="Top" Width="24" Click="btnProcessoMais2_Click" />
+        <Button Content="-" Height="23" HorizontalAlignment="Left" Margin="271,225,0,0" Name="btnRecursosMenos2" VerticalAlignment="Top" Width="24" Click="btnRecursosMenos2_Click" />
+        <Button Content="-" Height="23" HorizontalAlignment="Left" Margin="596,225,0,0" Name="btnProcessoMenos2" VerticalAlignment="Top" Width="24" Click="btnProcessoMenos2_Click" />        
+        <Label Content="Processo 2" Height="28" HorizontalAlignment="Left" Margin="337,226,0,0" Name="label4" VerticalAlignment="Top" />
+        <Button Content="Finalizar" Height="34" HorizontalAlignment="Left" Margin="12,487,0,0" Name="btnFinalizar" VerticalAlignment="Top" Width="517" Click="btnFinalizar_Click" />
+        <ListView Height="156" HorizontalAlignment="Left" Margin="12,43,0,0" Name="WPRecursos" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top" Width="283" Background="#FFEBEBEB" Focusable="False" SelectionChanged="WPRecursos_SelectionChanged" SelectionMode="Single" />
+        <ListView Height="210" HorizontalAlignment="Left" Margin="12,259,0,0" Name="WPRecursos2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top" Width="283" Background="#FFEBEBEB" />
+        <ListView Height="156" HorizontalAlignment="Left" Margin="337,43,0,0" Name="WPProcessos" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top" Width="283" Background="#FFEBEBEB" Focusable="False" SelectionMode="Single" SelectionChanged="WPProcessos_SelectionChanged" />
+        <ListView Height="210" HorizontalAlignment="Left" Margin="337,259,0,0" Name="WPProcessos2" ScrollViewer.HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top" Width="283" Background="#FFEBEBEB" />
+        <Button Content="Resetar" Height="34" HorizontalAlignment="Left" Margin="535,487,0,0" Name="btnResetar" VerticalAlignment="Top" Width="85" Click="btnResetar_Click" />
+    </Grid>
+</Window>

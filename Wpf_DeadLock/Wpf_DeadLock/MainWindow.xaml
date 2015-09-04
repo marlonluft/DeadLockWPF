@@ -1,0 +1,12 @@
+﻿<Window x:Class="Wpf_DeadLock.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DeadLock - Marlon Luft Salvador" Height="427" Width="654" xmlns:my="clr-namespace:Wpf_DeadLock" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" WindowStyle="SingleBorderWindow" Icon="/Wpf_DeadLock;component/Images/Untitled.png" Background="#FDF2F2F2" Loaded="Window_Loaded" AllowsTransparency="False">
+    <Grid Name="gridMaroto">
+        <Button Content="Enviar" Height="33" HorizontalAlignment="Left" Margin="214,12,0,0" Name="btnEnviar" VerticalAlignment="Top" Width="101" Click="btnEnviar_Click" IsEnabled="True" />
+        <Button Content="Redefinir" Height="33" HorizontalAlignment="Left" Margin="328,12,0,0" Name="btnReset" VerticalAlignment="Top" Width="101" Click="btnReset_Click" />
+        <Canvas Height="314" HorizontalAlignment="Left" Margin="0,74,0,0" Name="CanvasMaroto" VerticalAlignment="Top" Width="654" Background="White" />
+        <Label Content="Mova os objetos antes de clicar em enviar!" Height="28" HorizontalAlignment="Left" Margin="204,51,0,0" Name="label1" VerticalAlignment="Top" />
+        <Label Content="Status: " Height="28" HorizontalAlignment="Left" Margin="12,40,0,0" Name="lblStatus" VerticalAlignment="Top" />
+    </Grid>
+</Window>
