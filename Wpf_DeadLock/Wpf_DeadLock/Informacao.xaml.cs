@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Shapes;
+using Wpf_DeadLock.Library.Entity;
 using Wpf_DeadLock.Model;
 using Wpf_DeadLock.UserControls;
 
@@ -183,7 +184,7 @@ namespace Wpf_DeadLock
 
                 //Inicializa as listas
                 funcoes.Processos = new List<Processos>();
-                funcoes.Recursos = new List<Recursos>();
+                funcoes.Recursos = new List<Resources>();
                 funcoes.Linhas = new List<LineConnection>();
                 funcoes.Elementos = new List<UIElement>();
 
@@ -192,19 +193,19 @@ namespace Wpf_DeadLock
                 int Left = 10;
                 for (int i = 0; i < WPRecursos.Items.Count; i++)
                 {
-                    Recursos recurso = new Recursos();
-                    recurso.ID = i;
+                    Resources recurso = new Resources();
+                    recurso.Id = i;
                     if (string.IsNullOrWhiteSpace(((UCRescurso)WPRecursos.Items[i]).txtPontos.Text))
                     {
-                        recurso.Pontos_Disponivel = 1;
+                        recurso.AvailablePoints = 1;
                     }
                     else
                     {
-                        recurso.Pontos_Disponivel = int.Parse(((UCRescurso)WPRecursos.Items[i]).txtPontos.Text);
+                        recurso.AvailablePoints = int.Parse(((UCRescurso)WPRecursos.Items[i]).txtPontos.Text);
                     }
                     recurso.Top = Top;
                     recurso.Left = Left;
-                    recurso.Processos_Necessarios = new List<int>();
+                    recurso.NeccesariesProcesses = new List<int>();
                     funcoes.Recursos.Add(recurso);
                     Left += 60;
                 }
@@ -230,9 +231,9 @@ namespace Wpf_DeadLock
                 {
                     for (int x = 0; x < funcoes.Recursos.Count; x++)
                     {
-                        if (FiltrarNumero(((UCRequer)WPRecursos2.Items[i]).cmb1.SelectedValue.ToString()) == funcoes.Recursos[x].ID)
+                        if (FiltrarNumero(((UCRequer)WPRecursos2.Items[i]).cmb1.SelectedValue.ToString()) == funcoes.Recursos[x].Id)
                         {
-                            funcoes.Recursos[x].Processos_Necessarios.Add(FiltrarNumero(((UCRequer)WPRecursos2.Items[i]).cmb2.SelectedValue.ToString()));
+                            funcoes.Recursos[x].NeccesariesProcesses.Add(FiltrarNumero(((UCRequer)WPRecursos2.Items[i]).cmb2.SelectedValue.ToString()));
                             break;
                         }
                     }
@@ -261,7 +262,7 @@ namespace Wpf_DeadLock
                 }
                 for (int i = 0; i < funcoes.Recursos.Count; i++)
                 {
-                    if (funcoes.Recursos[i].Processos_Necessarios.Count > 0)
+                    if (funcoes.Recursos[i].NeccesariesProcesses.Count > 0)
                     {
                         funcoes.Recursos_Necessitam_Processos++;
                     }

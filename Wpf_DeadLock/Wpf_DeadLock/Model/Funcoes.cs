@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf_DeadLock.Library.Entity;
 
 namespace Wpf_DeadLock.Model
 {
@@ -20,7 +21,7 @@ namespace Wpf_DeadLock.Model
 
         //============== Listas =====================================
         public List<Processos> Processos { get; set; }
-        public List<Recursos> Recursos { get; set; }
+        public List<Resources> Recursos { get; set; }
 
         public List<LineConnection> Linhas { get; set; }
         public List<UIElement> Elementos { get; set; }
@@ -76,7 +77,7 @@ namespace Wpf_DeadLock.Model
                 if (Recursos[i].Left == left && Recursos[i].Top == top)
                 {
                     Label lbl = new Label();
-                    lbl.Content = "R" + Recursos[i].ID + "\n";
+                    lbl.Content = "R" + Recursos[i].Id + "\n";
                     Canvas.SetLeft(lbl, left + 10);
                     Canvas.SetTop(lbl, top - 2);
 
@@ -85,12 +86,12 @@ namespace Wpf_DeadLock.Model
                         lbl.Content += "•";
                     }
 
-                    ellipse.Name = ("R" + Recursos[i].ID);
+                    ellipse.Name = ("R" + Recursos[i].Id);
                     Elementos.Add(ellipse);
 
                     Elementos.Add(lbl);
 
-                    Recursos[i].Texto = lbl;
+                    Recursos[i].IdentificationText = lbl;
                     break;
                 }
             }
@@ -105,7 +106,7 @@ namespace Wpf_DeadLock.Model
 
             /*=================================*/
             Wpf_DeadLock.Model.Processos processoM = new Processos();
-            Wpf_DeadLock.Model.Recursos recursoM = new Recursos();
+            var recursoM = new Resources();
 
             /*=================================*/
             switch (Processo)
@@ -167,7 +168,7 @@ namespace Wpf_DeadLock.Model
                 }
                 foreach (var item in Recursos)
                 {
-                    if (item.ID == RecursoID)
+                    if (item.Id == RecursoID)
                     {
                         recursoM = item;
                         break;
@@ -338,7 +339,7 @@ namespace Wpf_DeadLock.Model
             }
             for (int i = 0; i < Recursos.Count; i++)
             {
-                CriarRecurso(Recursos[i].Top, Recursos[i].Left, Recursos[i].Pontos_Disponivel);
+                CriarRecurso(Recursos[i].Top, Recursos[i].Left, Recursos[i].AvailablePoints);
             }
         }
     }

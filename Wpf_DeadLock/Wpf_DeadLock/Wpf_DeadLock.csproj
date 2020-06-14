@@ -142,7 +142,7 @@
     <Compile Include="Model\Funcoes.cs" />
     <Compile Include="Library\Entity\LineConnection.cs" />
     <Compile Include="Model\Processos.cs" />
-    <Compile Include="Model\Recursos.cs" />
+    <Compile Include="Library\Entity\Resources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
