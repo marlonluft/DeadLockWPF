@@ -25,7 +25,7 @@ namespace Wpf_DeadLock.Model
             rectangle.Width = 40;
             rectangle.StrokeThickness = 2;
             rectangle.Stroke = System.Windows.Media.Brushes.Gray;
-            
+
 
             for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
             {
@@ -55,7 +55,7 @@ namespace Wpf_DeadLock.Model
             ellipse.Height = 40;
             ellipse.Width = 40;
             ellipse.Stroke = System.Windows.Media.Brushes.Gray;
-            ellipse.StrokeThickness = 2;            
+            ellipse.StrokeThickness = 2;
             Canvas.SetLeft(ellipse, left);
             Canvas.SetTop(ellipse, top);
 
@@ -85,10 +85,45 @@ namespace Wpf_DeadLock.Model
         }
 
         private static int cont = 0;
-        public static void CriarLinha(int ProcessoID, int RecursoID, bool? Deadlock, bool Processo)
+
+        public static void UpdateLine(int processId, int resourceId, bool isDeadLock, bool process)
         {
-            SolidColorBrush[] Strokes = { Brushes.Black, Brushes.Blue, Brushes.Red };
-            int x = 0;
+            if (isDeadLock)
+            {
+                foreach (var item in Data.GetInstance().Linhas)
+                {
+                    if (item.ProcessId == processId &&
+                        item.ResourceId == resourceId &&
+                        item.Process == process)
+                    {
+                        if (item.LineDraw.Stroke != Brushes.Red)
+                        {
+                            MessageBox.Show("Possivel DeadLock");
+                        }
+
+                        item.LineDraw.Stroke = Brushes.Red;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                foreach (var item in Data.GetInstance().Linhas)
+                {
+                    if (item.ProcessId == processId &&
+                        item.ResourceId == resourceId &&
+                        item.Process == process)
+                    {
+                        Data.GetInstance().Linhas.Remove(item);
+                        MessageBox.Show("Linha irá ser Removida");
+                        break;
+                    }
+                }
+            }
+        }
+
+        public static void CreateLine(int processId, int resourceId, bool process)
+        {
             int repetido = 0;
 
             /*=================================*/
@@ -96,220 +131,172 @@ namespace Wpf_DeadLock.Model
             var recursoM = new Resources();
 
             /*=================================*/
-            switch (Processo)
+
+            foreach (var item in Data.GetInstance().Processos)
             {
-                case true:
-                    x = 0;
+                if (item.Id == processId)
+                {
+                    processoM = item;
                     break;
-                case false:
-                    x = 1;
+                }
+            }
+            foreach (var item in Data.GetInstance().Recursos)
+            {
+                if (item.Id == resourceId)
+                {
+                    recursoM = item;
                     break;
+                }
             }
 
-            switch (Deadlock)
+            Path p = new Path
             {
-                case true:
+                Stroke = process ? Brushes.Black : Brushes.Blue,
+                StrokeThickness = 2
+            };
 
-                    foreach (var item in Data.GetInstance().Linhas)
-                    {
-                        if (item.ProcessId == ProcessoID &&
-                            item.ResourceId == RecursoID &&
-                            item.Process == Processo)
-                        {
-                            if(item.LineDraw.Stroke != Strokes[2])
-                            {
-                                MessageBox.Show("Possivel DeadLock");
-                            }
-
-                            item.LineDraw.Stroke = Strokes[2];                            
-                            break;
-                        }
-                    }
-                    break;
-
-                case false:
-
-                    foreach (var item in Data.GetInstance().Linhas)
-                    {
-                        if (item.ProcessId == ProcessoID &&
-                            item.ResourceId == RecursoID &&
-                            item.Process == Processo)
-                        {
-                            Data.GetInstance().Linhas.Remove(item);
-                            MessageBox.Show("Linha irá ser Removida");
-                            break;
-                        }
-                    }
-                    break;
+            for (int i = 0; i < Data.GetInstance().Linhas.Count; i++)
+            {
+                if (Data.GetInstance().Linhas[i].ProcessId == processId &&
+                Data.GetInstance().Linhas[i].ResourceId == resourceId)
+                {
+                    repetido++;//Espaçamento entre linhas repetidas...
+                }
             }
 
-            if (Deadlock == null)
+            if (process)
             {
-                foreach (var item in Data.GetInstance().Processos)
+                //Linhas com pontos de partida de processos
+                if (recursoM.Top < (processoM.Top + 50) && recursoM.Top > (processoM.Top - 50))
                 {
-                    if (item.Id == ProcessoID)
+                    if (recursoM.Left > processoM.Left)
                     {
-                        processoM = item;
-                        break;
-                    }
-                }
-                foreach (var item in Data.GetInstance().Recursos)
-                {
-                    if (item.Id == RecursoID)
-                    {
-                        recursoM = item;
-                        break;
-                    }
-                }
-
-                System.Windows.Shapes.Path p;
-                p = new System.Windows.Shapes.Path();
-                p.Stroke = Strokes[x];
-                p.StrokeThickness = 2;
-
-                for (int i = 0; i < Data.GetInstance().Linhas.Count; i++)
-                {
-                    if (Data.GetInstance().Linhas[i].ProcessId == ProcessoID &&
-                    Data.GetInstance().Linhas[i].ResourceId == RecursoID)
-                    {
-                        repetido++;//Espaçamento entre linhas repetidas...
-                    }
-                }
-
-                if (Processo)
-                {
-                    //Linhas com pontos de partida de processos
-                    if (recursoM.Top < (processoM.Top + 50) && recursoM.Top > (processoM.Top - 50))
-                    {
-                        if (recursoM.Left > processoM.Left)
-                        {
-                            //linha direita
-                            p.Data = Geometry.Parse(
-                                "M " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
-                                " L " + ((int)((processoM.Left + recursoM.Left) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
-                                " L " + recursoM.Left + " " + (recursoM.Top + 20) +
-                                " L " + recursoM.Left + " " + ((recursoM.Top + 20) + 5) +
-                                " L " + (recursoM.Left + 5) + " " + (recursoM.Top + 20) +
-                                " L " + recursoM.Left + " " + ((recursoM.Top + 20) - 5) +
-                                " L " + recursoM.Left + " " + (recursoM.Top + 20));
-                        }
-                        else
-                        {
-                            //linha esquerda
-                            p.Data = Geometry.Parse(
-                                "M " + (processoM.Left) + " " + (processoM.Top + 10) +
-                                " L " + ((int)((processoM.Left + (recursoM.Left + 40)) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
-                                " L " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
-                                " L " + (recursoM.Left + 40) + " " + ((recursoM.Top + 20) + 5) +
-                                " L " + ((recursoM.Left + 40) - 5) + " " + (recursoM.Top + 20) +
-                                " L " + (recursoM.Left + 40) + " " + ((recursoM.Top + 20) - 5) +
-                                " L " + (recursoM.Left + 40) + " " + (recursoM.Top + 20));
-                        }
+                        //linha direita
+                        p.Data = Geometry.Parse(
+                            "M " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
+                            " L " + ((int)((processoM.Left + recursoM.Left) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
+                            " L " + recursoM.Left + " " + (recursoM.Top + 20) +
+                            " L " + recursoM.Left + " " + ((recursoM.Top + 20) + 5) +
+                            " L " + (recursoM.Left + 5) + " " + (recursoM.Top + 20) +
+                            " L " + recursoM.Left + " " + ((recursoM.Top + 20) - 5) +
+                            " L " + recursoM.Left + " " + (recursoM.Top + 20));
                     }
                     else
                     {
-                        if (recursoM.Left > (processoM.Left + 50))
-                        {
-                            repetido = repetido * 15;
-                        }
-                        else
-                        {
-                            repetido = repetido * 5;
-                        }
-
-                        if (recursoM.Top > (processoM.Top + 50))
-                        {
-                            //linha baixo
-                            p.Data = Geometry.Parse(
-                                "M " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
-                                " L " + ((int)(((processoM.Left + 20) + (recursoM.Left)) / 2) + repetido) + " " + ((int)((recursoM.Top + (processoM.Top + 20)) / 2)) +
-                                " L " + (recursoM.Left + 20) + " " + recursoM.Top +
-                                " L " + ((recursoM.Left + 20) + 5) + " " + (recursoM.Top - 10) +
-                                " L " + ((recursoM.Left + 20) - 5) + " " + (recursoM.Top - 10) +
-                                " L " + (recursoM.Left + 20) + " " + recursoM.Top);
-                        }
-                        else
-                        {
-                            //linha topo
-                            p.Data = Geometry.Parse(
-                                "M " + (processoM.Left + 20) + " " + processoM.Top +
-                                " L " + (((int)((processoM.Left + 20) + (recursoM.Left + 20)) / 2) + repetido) + " " + ((int)(((recursoM.Top + 40) + processoM.Top) / 2)) +
-                                " L " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
-                                " L " + ((recursoM.Left + 20) + 5) + " " + ((recursoM.Top + 40) + 10) +
-                                " L " + ((recursoM.Left + 20) - 5) + " " + ((recursoM.Top + 40) + 10) +
-                                " L " + (recursoM.Left + 20) + " " + (recursoM.Top + 40));
-                        }
+                        //linha esquerda
+                        p.Data = Geometry.Parse(
+                            "M " + (processoM.Left) + " " + (processoM.Top + 10) +
+                            " L " + ((int)((processoM.Left + (recursoM.Left + 40)) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
+                            " L " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
+                            " L " + (recursoM.Left + 40) + " " + ((recursoM.Top + 20) + 5) +
+                            " L " + ((recursoM.Left + 40) - 5) + " " + (recursoM.Top + 20) +
+                            " L " + (recursoM.Left + 40) + " " + ((recursoM.Top + 20) - 5) +
+                            " L " + (recursoM.Left + 40) + " " + (recursoM.Top + 20));
                     }
-
                 }
                 else
                 {
-                    //Linhas com pontos de partida de de recursos
-                    if (processoM.Top < (recursoM.Top + 50) && processoM.Top > (recursoM.Top - 50))
+                    if (recursoM.Left > (processoM.Left + 50))
                     {
-                        if (processoM.Left > recursoM.Left)
-                        {
-                            //linha direita
-                            p.Data = Geometry.Parse(
-                                "M " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
-                                " L " + ((int)((recursoM.Left + processoM.Left) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
-                                " L " + processoM.Left + " " + (processoM.Top + 10) +
-                                " L " + processoM.Left + " " + ((processoM.Top + 10) + 5) +
-                                " L " + (processoM.Left + 5) + " " + (processoM.Top + 10) +
-                                " L " + processoM.Left + " " + ((processoM.Top + 10) - 5) +
-                                " L " + processoM.Left + " " + (processoM.Top + 10));
-                        }
-                        else
-                        {
-                            //linha esquerda
-                            p.Data = Geometry.Parse(
-                                "M " + (recursoM.Left) + " " + (recursoM.Top + 20) +
-                                " L " + ((int)((recursoM.Left + (processoM.Left + 40)) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
-                                " L " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
-                                " L " + (processoM.Left + 40) + " " + ((processoM.Top + 10) + 5) +
-                                " L " + ((processoM.Left + 40) - 5) + " " + (processoM.Top + 10) +
-                                " L " + (processoM.Left + 40) + " " + ((processoM.Top + 10) - 5) +
-                                " L " + (processoM.Left + 40) + " " + (processoM.Top + 10));
-                        }
+                        repetido *= 15;
                     }
                     else
                     {
-                        if (recursoM.Left > (processoM.Left + 50))
-                        {
-                            repetido = repetido * 15;
-                        }
-                        else
-                        {
-                            repetido = repetido * 5;
-                        }
+                        repetido *= 5;
+                    }
 
-                        if (processoM.Top > (recursoM.Top + 50))
-                        {
-                            //linha baixo
-                            p.Data = Geometry.Parse(
-                                "M " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
-                                " L " + ((int)(((recursoM.Left + 20) + (processoM.Left)) / 2) + repetido) + " " + ((int)((processoM.Top + (recursoM.Top + 40)) / 2)) +
-                                " L " + (processoM.Left + 20) + " " + processoM.Top +
-                                " L " + ((processoM.Left + 20) + 5) + " " + (processoM.Top - 10) +
-                                " L " + ((processoM.Left + 20) - 5) + " " + (processoM.Top - 10) +
-                                " L " + (processoM.Left + 20) + " " + processoM.Top);
-                        }
-                        else
-                        {
-                            //linha topo
-                            p.Data = Geometry.Parse(
-                                "M " + (recursoM.Left + 20) + " " + recursoM.Top +
-                                " L " + (((int)((recursoM.Left + 20) + (processoM.Left + 20)) / 2) + repetido) + " " + ((int)(((processoM.Top + 40) + recursoM.Top) / 2)) +
-                                " L " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
-                                " L " + ((processoM.Left + 20) + 5) + " " + ((processoM.Top + 20) + 10) +
-                                " L " + ((processoM.Left + 20) - 5) + " " + ((processoM.Top + 20) + 10) +
-                                " L " + (processoM.Left + 20) + " " + (processoM.Top + 20));
-                        }
+                    if (recursoM.Top > (processoM.Top + 50))
+                    {
+                        //linha baixo
+                        p.Data = Geometry.Parse(
+                            "M " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
+                            " L " + ((int)(((processoM.Left + 20) + (recursoM.Left)) / 2) + repetido) + " " + ((int)((recursoM.Top + (processoM.Top + 20)) / 2)) +
+                            " L " + (recursoM.Left + 20) + " " + recursoM.Top +
+                            " L " + ((recursoM.Left + 20) + 5) + " " + (recursoM.Top - 10) +
+                            " L " + ((recursoM.Left + 20) - 5) + " " + (recursoM.Top - 10) +
+                            " L " + (recursoM.Left + 20) + " " + recursoM.Top);
+                    }
+                    else
+                    {
+                        //linha topo
+                        p.Data = Geometry.Parse(
+                            "M " + (processoM.Left + 20) + " " + processoM.Top +
+                            " L " + (((int)((processoM.Left + 20) + (recursoM.Left + 20)) / 2) + repetido) + " " + ((int)(((recursoM.Top + 40) + processoM.Top) / 2)) +
+                            " L " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
+                            " L " + ((recursoM.Left + 20) + 5) + " " + ((recursoM.Top + 40) + 10) +
+                            " L " + ((recursoM.Left + 20) - 5) + " " + ((recursoM.Top + 40) + 10) +
+                            " L " + (recursoM.Left + 20) + " " + (recursoM.Top + 40));
+                    }
+                }
+
+            }
+            else
+            {
+                //Linhas com pontos de partida de de recursos
+                if (processoM.Top < (recursoM.Top + 50) && processoM.Top > (recursoM.Top - 50))
+                {
+                    if (processoM.Left > recursoM.Left)
+                    {
+                        //linha direita
+                        p.Data = Geometry.Parse(
+                            "M " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
+                            " L " + ((int)((recursoM.Left + processoM.Left) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
+                            " L " + processoM.Left + " " + (processoM.Top + 10) +
+                            " L " + processoM.Left + " " + ((processoM.Top + 10) + 5) +
+                            " L " + (processoM.Left + 5) + " " + (processoM.Top + 10) +
+                            " L " + processoM.Left + " " + ((processoM.Top + 10) - 5) +
+                            " L " + processoM.Left + " " + (processoM.Top + 10));
+                    }
+                    else
+                    {
+                        //linha esquerda
+                        p.Data = Geometry.Parse(
+                            "M " + (recursoM.Left) + " " + (recursoM.Top + 20) +
+                            " L " + ((int)((recursoM.Left + (processoM.Left + 40)) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
+                            " L " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
+                            " L " + (processoM.Left + 40) + " " + ((processoM.Top + 10) + 5) +
+                            " L " + ((processoM.Left + 40) - 5) + " " + (processoM.Top + 10) +
+                            " L " + (processoM.Left + 40) + " " + ((processoM.Top + 10) - 5) +
+                            " L " + (processoM.Left + 40) + " " + (processoM.Top + 10));
+                    }
+                }
+                else
+                {
+                    if (recursoM.Left > (processoM.Left + 50))
+                    {
+                        repetido *= 15;
+                    }
+                    else
+                    {
+                        repetido *= 5;
+                    }
+
+                    if (processoM.Top > (recursoM.Top + 50))
+                    {
+                        //linha baixo
+                        p.Data = Geometry.Parse(
+                            "M " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
+                            " L " + ((int)(((recursoM.Left + 20) + (processoM.Left)) / 2) + repetido) + " " + ((int)((processoM.Top + (recursoM.Top + 40)) / 2)) +
+                            " L " + (processoM.Left + 20) + " " + processoM.Top +
+                            " L " + ((processoM.Left + 20) + 5) + " " + (processoM.Top - 10) +
+                            " L " + ((processoM.Left + 20) - 5) + " " + (processoM.Top - 10) +
+                            " L " + (processoM.Left + 20) + " " + processoM.Top);
+                    }
+                    else
+                    {
+                        //linha topo
+                        p.Data = Geometry.Parse(
+                            "M " + (recursoM.Left + 20) + " " + recursoM.Top +
+                            " L " + (((int)((recursoM.Left + 20) + (processoM.Left + 20)) / 2) + repetido) + " " + ((int)(((processoM.Top + 40) + recursoM.Top) / 2)) +
+                            " L " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
+                            " L " + ((processoM.Left + 20) + 5) + " " + ((processoM.Top + 20) + 10) +
+                            " L " + ((processoM.Left + 20) - 5) + " " + ((processoM.Top + 20) + 10) +
+                            " L " + (processoM.Left + 20) + " " + (processoM.Top + 20));
                     }
                 }
 
                 cont++;
-                LineConnection linha = new LineConnection { Id = cont, ProcessId = ProcessoID, ResourceId = RecursoID, LineDraw = p, Process = Processo };
+                LineConnection linha = new LineConnection { Id = cont, ProcessId = processId, ResourceId = resourceId, LineDraw = p, Process = process };
                 Data.GetInstance().Linhas.Add(linha);
             }
         }
@@ -320,13 +307,14 @@ namespace Wpf_DeadLock.Model
         public void Ilustrar()
         {
             //Acrescenta os processos e recursos ao desenho
-            for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
+            foreach (var process in Data.GetInstance().Processos)
             {
-                CriarProcesso(Data.GetInstance().Processos[i].Top, Data.GetInstance().Processos[i].Left);
+                CriarProcesso(process.Top, process.Left);
             }
-            for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
+
+            foreach (var resource in Data.GetInstance().Recursos)
             {
-                CriarRecurso(Data.GetInstance().Recursos[i].Top, Data.GetInstance().Recursos[i].Left, Data.GetInstance().Recursos[i].AvailablePoints);
+                CriarRecurso(resource.Top, resource.Left, resource.AvailablePoints);
             }
         }
     }
