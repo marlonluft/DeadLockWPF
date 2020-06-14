@@ -96,6 +96,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Library\Data.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="UserControls\UCProcesso.xaml.cs">
       <DependentUpon>UCProcesso.xaml</DependentUpon>

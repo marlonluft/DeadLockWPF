@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Wpf_DeadLock.Library;
 using Wpf_DeadLock.Library.Entity;
 using Wpf_DeadLock.Model;
 
@@ -34,26 +35,26 @@ namespace Wpf_DeadLock
             btnEnviar.Focusable = false;//retirar o foco do botão
 
             //Criar linhas
-            for (int i = 0; i < funcoes.Recursos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
             {
-                for (int x = 0; x < funcoes.Recursos[i].NeccesariesProcesses.Count; x++)
+                for (int x = 0; x < Data.GetInstance().Recursos[i].NeccesariesProcesses.Count; x++)
                 {
-                    funcoes.CriarLinha(funcoes.Recursos[i].NeccesariesProcesses[x], funcoes.Recursos[i].Id, null, false);
+                    funcoes.CriarLinha(Data.GetInstance().Recursos[i].NeccesariesProcesses[x], Data.GetInstance().Recursos[i].Id, null, false);
                 }
             }
 
-            for (int i = 0; i < funcoes.Processos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
             {
-                for (int x = 0; x < funcoes.Processos[i].NeccesariesResources.Count; x++)
+                for (int x = 0; x < Data.GetInstance().Processos[i].NeccesariesResources.Count; x++)
                 {
-                    funcoes.CriarLinha(funcoes.Processos[i].Id, funcoes.Processos[i].NeccesariesResources[x], null, true);
+                    funcoes.CriarLinha(Data.GetInstance().Processos[i].Id, Data.GetInstance().Processos[i].NeccesariesResources[x], null, true);
                 }
             }
             AtualizarCanvas();            
             MessageBox.Show("Linhas Adicionadas");
 
             //Logica do programa
-            int vezes = funcoes.Quantidade_Processos + funcoes.Quantidade_Recursos;
+            int vezes = Data.GetInstance().Quantidade_Processos + Data.GetInstance().Quantidade_Recursos;
 
             bool segundaChance=false; //impede que o programa identifique como deadlock falso
             for (int i = 0; i < vezes; i++)
@@ -64,25 +65,25 @@ namespace Wpf_DeadLock
                 AtualizarCanvas();
 
                 int qtdNecessaria = 0;
-                for (int x = 0; x < funcoes.Processos.Count; x++)
+                for (int x = 0; x < Data.GetInstance().Processos.Count; x++)
                 {
-                    if (funcoes.Processos[x].NeccesariesResources.Count > 0)
+                    if (Data.GetInstance().Processos[x].NeccesariesResources.Count > 0)
                     {
                         qtdNecessaria++;
                     }
                 }
-                if (qtdNecessaria == funcoes.Processos_Necessitam_Recursos && 
-                    funcoes.Processos_Necessitam_Recursos>0)
+                if (qtdNecessaria == Data.GetInstance().Processos_Necessitam_Recursos && 
+                    Data.GetInstance().Processos_Necessitam_Recursos>0)
                 {
                     qtdNecessaria = 0;
-                    for (int x = 0; x < funcoes.Recursos.Count; x++)
+                    for (int x = 0; x < Data.GetInstance().Recursos.Count; x++)
                     {
-                        if (funcoes.Recursos[x].NeccesariesProcesses.Count > 0)
+                        if (Data.GetInstance().Recursos[x].NeccesariesProcesses.Count > 0)
                         {
                             qtdNecessaria++;
                         }
                     }
-                    if (qtdNecessaria == funcoes.Recursos_Necessitam_Processos)
+                    if (qtdNecessaria == Data.GetInstance().Recursos_Necessitam_Processos)
                     {
                         if (segundaChance)
                         {
@@ -102,26 +103,26 @@ namespace Wpf_DeadLock
             builder.Append("============= O sistema está em DeadLock! =============\n");
 
             bool deadLock = false;
-            for (int i = 0; i < funcoes.Processos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
             {
-                if (funcoes.Processos[i].NeccesariesResources.Count > 0)
+                if (Data.GetInstance().Processos[i].NeccesariesResources.Count > 0)
                 {
-                    for (int x = 0; x < funcoes.Processos[i].NeccesariesResources.Count; x++)
+                    for (int x = 0; x < Data.GetInstance().Processos[i].NeccesariesResources.Count; x++)
                     {
-                        builder.Append("- O Processo " + funcoes.Processos[i].Id + " necessita do Recurso " + funcoes.Processos[i].NeccesariesResources[x] + " \n");
+                        builder.Append("- O Processo " + Data.GetInstance().Processos[i].Id + " necessita do Recurso " + Data.GetInstance().Processos[i].NeccesariesResources[x] + " \n");
                     }
 
                     deadLock = true;
                 }
             }
 
-            for (int i = 0; i < funcoes.Recursos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
             {
-                if (funcoes.Recursos[i].NeccesariesProcesses.Count > 0)
+                if (Data.GetInstance().Recursos[i].NeccesariesProcesses.Count > 0)
                 {
-                    for (int x = 0; x < funcoes.Recursos[i].NeccesariesProcesses.Count; x++)
+                    for (int x = 0; x < Data.GetInstance().Recursos[i].NeccesariesProcesses.Count; x++)
                     {
-                        builder.Append("- O Recurso " + funcoes.Recursos[i].Id + " necessita do Processo " + funcoes.Recursos[i].NeccesariesProcesses[x] + " \n");
+                        builder.Append("- O Recurso " + Data.GetInstance().Recursos[i].Id + " necessita do Processo " + Data.GetInstance().Recursos[i].NeccesariesProcesses[x] + " \n");
                     }
 
                     deadLock = true;
@@ -147,12 +148,12 @@ namespace Wpf_DeadLock
         /// <param name="e"></param>
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
-            funcoes.Recursos_Necessitam_Processos = 0;
-            funcoes.Processos_Necessitam_Recursos = 0;
-            funcoes.Processos.Clear();
-            funcoes.Recursos.Clear();
-            funcoes.Elementos.Clear();
-            funcoes.Linhas.Clear();
+            Data.GetInstance().Recursos_Necessitam_Processos = 0;
+            Data.GetInstance().Processos_Necessitam_Recursos = 0;
+            Data.GetInstance().Processos.Clear();
+            Data.GetInstance().Recursos.Clear();
+            Data.GetInstance().Elementos.Clear();
+            Data.GetInstance().Linhas.Clear();
 
             CanvasMaroto.Children.Clear();
             this.Close();
@@ -162,7 +163,7 @@ namespace Wpf_DeadLock
         {
             CanvasMaroto.Children.Clear();
 
-            foreach (var item in funcoes.Elementos)
+            foreach (var item in Data.GetInstance().Elementos)
             {
                 item.MouseLeftButtonDown += shape_MouseLeftButtonDown;
                 item.MouseMove += shape_MouseMove;
@@ -176,7 +177,7 @@ namespace Wpf_DeadLock
         {            
             CanvasMaroto.Children.Clear();
 
-            foreach (var item in funcoes.Elementos)
+            foreach (var item in Data.GetInstance().Elementos)
             {
                 item.MouseLeftButtonDown += shape_MouseLeftButtonDown;
                 item.MouseMove += shape_MouseMove;
@@ -184,7 +185,7 @@ namespace Wpf_DeadLock
                 CanvasMaroto.Children.Add(item);
             }
 
-            foreach (var item in funcoes.Linhas)
+            foreach (var item in Data.GetInstance().Linhas)
             {
                 CanvasMaroto.Children.Add(item.LineDraw);
             }            
@@ -196,29 +197,29 @@ namespace Wpf_DeadLock
         /// </summary>
         public void Processo()
         {
-            for (int i = 0; i < funcoes.Processos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
             {
-                if (funcoes.Processos[i].NeccesariesResources.Count > 0)
+                if (Data.GetInstance().Processos[i].NeccesariesResources.Count > 0)
                 {
-                    for (int q = 0; q < funcoes.Processos[i].NeccesariesResources.Count; q++)
+                    for (int q = 0; q < Data.GetInstance().Processos[i].NeccesariesResources.Count; q++)
                     {
-                        for (int x = 0; x < funcoes.Recursos.Count; x++)
+                        for (int x = 0; x < Data.GetInstance().Recursos.Count; x++)
                         {
-                            if (funcoes.Processos[i].NeccesariesResources[q] == funcoes.Recursos[x].Id)
+                            if (Data.GetInstance().Processos[i].NeccesariesResources[q] == Data.GetInstance().Recursos[x].Id)
                             {
-                                if (funcoes.Recursos[x].IsAvailable)
+                                if (Data.GetInstance().Recursos[x].IsAvailable)
                                 {
-                                    funcoes.CriarLinha(funcoes.Processos[i].Id, funcoes.Recursos[x].Id, false, true);
-                                    funcoes.Processos[i].NeccesariesResources.RemoveAt(q);
+                                    funcoes.CriarLinha(Data.GetInstance().Processos[i].Id, Data.GetInstance().Recursos[x].Id, false, true);
+                                    Data.GetInstance().Processos[i].NeccesariesResources.RemoveAt(q);
                                     AtualizarCanvas();
                                     //MessageBox.Show("Linha removida");
                                     break;
                                 }
                                 else
                                 {
-                                    for (int m = 0; m < funcoes.Recursos[x].NeccesariesProcesses.Count; m++)
+                                    for (int m = 0; m < Data.GetInstance().Recursos[x].NeccesariesProcesses.Count; m++)
                                     {
-                                        funcoes.Recursos = Recurso_Unico(funcoes.Recursos[x].NeccesariesProcesses[m]);
+                                        Data.GetInstance().Recursos = Recurso_Unico(Data.GetInstance().Recursos[x].NeccesariesProcesses[m]);
                                     }
                                 }
                             }
@@ -233,30 +234,30 @@ namespace Wpf_DeadLock
         /// </summary>
         public void Recurso()
         {
-            for (int i = 0; i < funcoes.Recursos.Count; i++)
+            for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
             {
-                if (funcoes.Recursos[i].NeccesariesProcesses.Count > 0)
+                if (Data.GetInstance().Recursos[i].NeccesariesProcesses.Count > 0)
                 {
-                    for (int q = 0; q < funcoes.Recursos[i].NeccesariesProcesses.Count; q++)
+                    for (int q = 0; q < Data.GetInstance().Recursos[i].NeccesariesProcesses.Count; q++)
                     {
-                        for (int x = 0; x < funcoes.Processos.Count; x++)
+                        for (int x = 0; x < Data.GetInstance().Processos.Count; x++)
                         {
-                            if (funcoes.Recursos[i].NeccesariesProcesses[q] == funcoes.Processos[x].Id)
+                            if (Data.GetInstance().Recursos[i].NeccesariesProcesses[q] == Data.GetInstance().Processos[x].Id)
                             {
                                 //Verificado se o processo necessário está diponivel, se não tentará resolver o processo
-                                if (funcoes.Processos[x].IsAvailable)
+                                if (Data.GetInstance().Processos[x].IsAvailable)
                                 {
-                                    funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[i].Id, false, false);
-                                    funcoes.Recursos[i].NeccesariesProcesses.RemoveAt(q);
+                                    funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[i].Id, false, false);
+                                    Data.GetInstance().Recursos[i].NeccesariesProcesses.RemoveAt(q);
                                     AtualizarCanvas();
                                     //MessageBox.Show("Linha removida");
                                     break;
                                 }
                                 else
                                 {
-                                    for (int m = 0; m < funcoes.Processos[x].NeccesariesResources.Count; m++)
+                                    for (int m = 0; m < Data.GetInstance().Processos[x].NeccesariesResources.Count; m++)
                                     {
-                                        funcoes.Processos = Processo_Unico(funcoes.Processos[x].NeccesariesResources[m]);
+                                        Data.GetInstance().Processos = Processo_Unico(Data.GetInstance().Processos[x].NeccesariesResources[m]);
                                     }
                                 }
                             }
@@ -273,29 +274,29 @@ namespace Wpf_DeadLock
         /// <returns></returns>
         private List<Process> Processo_Unico(int ID_Processo)
         {
-            for (int t = 0; t < funcoes.Processos.Count; t++)
+            for (int t = 0; t < Data.GetInstance().Processos.Count; t++)
             {
-                if (funcoes.Processos[t].Id == ID_Processo)
+                if (Data.GetInstance().Processos[t].Id == ID_Processo)
                 {
-                    if (funcoes.Processos[t].NeccesariesResources.Count > 0)
+                    if (Data.GetInstance().Processos[t].NeccesariesResources.Count > 0)
                     {
-                        for (int q = 0; q < funcoes.Processos[t].NeccesariesResources.Count; q++)
+                        for (int q = 0; q < Data.GetInstance().Processos[t].NeccesariesResources.Count; q++)
                         {
-                            for (int x = 0; x < funcoes.Recursos.Count; x++)
+                            for (int x = 0; x < Data.GetInstance().Recursos.Count; x++)
                             {
-                                if (funcoes.Processos[t].NeccesariesResources[q] == funcoes.Recursos[x].Id)
+                                if (Data.GetInstance().Processos[t].NeccesariesResources[q] == Data.GetInstance().Recursos[x].Id)
                                 {
-                                    if (funcoes.Recursos[x].IsAvailable)
+                                    if (Data.GetInstance().Recursos[x].IsAvailable)
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[t].Id, funcoes.Recursos[x].Id, false, true);
-                                        funcoes.Processos[t].NeccesariesResources.RemoveAt(q);
+                                        funcoes.CriarLinha(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, false, true);
+                                        Data.GetInstance().Processos[t].NeccesariesResources.RemoveAt(q);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Linha removida");
                                         break;
                                     }
                                     else
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[t].Id, funcoes.Recursos[x].Id, true, true);
+                                        funcoes.CriarLinha(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, true, true);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Possivel DeadLock");
                                     }                                    
@@ -306,7 +307,7 @@ namespace Wpf_DeadLock
                     break;
                 }
             }
-            return funcoes.Processos;
+            return Data.GetInstance().Processos;
         }
 
         /// <summary>
@@ -316,29 +317,29 @@ namespace Wpf_DeadLock
         /// <returns></returns>
         private List<Resources> Recurso_Unico(int ID_Recurso)
         {
-            for (int t = 0; t < funcoes.Recursos.Count; t++)
+            for (int t = 0; t < Data.GetInstance().Recursos.Count; t++)
             {
-                if (funcoes.Recursos[t].Id == ID_Recurso)
+                if (Data.GetInstance().Recursos[t].Id == ID_Recurso)
                 {
-                    if (funcoes.Recursos[t].NeccesariesProcesses.Count > 0)
+                    if (Data.GetInstance().Recursos[t].NeccesariesProcesses.Count > 0)
                     {
-                        for (int q = 0; q < funcoes.Recursos[t].NeccesariesProcesses.Count; q++)
+                        for (int q = 0; q < Data.GetInstance().Recursos[t].NeccesariesProcesses.Count; q++)
                         {
-                            for (int x = 0; x < funcoes.Processos.Count; x++)
+                            for (int x = 0; x < Data.GetInstance().Processos.Count; x++)
                             {
-                                if (funcoes.Recursos[t].NeccesariesProcesses[q] == funcoes.Processos[x].Id)
+                                if (Data.GetInstance().Recursos[t].NeccesariesProcesses[q] == Data.GetInstance().Processos[x].Id)
                                 {
-                                    if (funcoes.Processos[x].IsAvailable)
+                                    if (Data.GetInstance().Processos[x].IsAvailable)
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[t].Id, false, false);
-                                        funcoes.Recursos[t].NeccesariesProcesses.RemoveAt(q);
+                                        funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, false, false);
+                                        Data.GetInstance().Recursos[t].NeccesariesProcesses.RemoveAt(q);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Linha removida");
                                         break;
                                     }
                                     else
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[t].Id, true, false);
+                                        funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, true, false);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Possivel DeadLock");
                                     }                                                                        
@@ -349,7 +350,7 @@ namespace Wpf_DeadLock
                     break;
                 }
             }
-            return funcoes.Recursos;
+            return Data.GetInstance().Recursos;
         }
 
         /*============ Mover objetos =================================*/
@@ -377,11 +378,11 @@ namespace Wpf_DeadLock
                 //Processo
                 if (source is System.Windows.Shapes.Rectangle)
                 {
-                    for (int i = 0; i < funcoes.Processos.Count; i++)
+                    for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
                     {
-                        if (funcoes.Processos[i].Left == x_shape && funcoes.Processos[i].Top == y_shape)
+                        if (Data.GetInstance().Processos[i].Left == x_shape && Data.GetInstance().Processos[i].Top == y_shape)
                         {
-                            IDElement = funcoes.Processos[i].Id;
+                            IDElement = Data.GetInstance().Processos[i].Id;
                             break;
                         }
                     }
@@ -390,11 +391,11 @@ namespace Wpf_DeadLock
                 //Recurso
                 if (source is System.Windows.Shapes.Ellipse)
                 {
-                    for (int i = 0; i < funcoes.Recursos.Count; i++)
+                    for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
                     {
-                        if (funcoes.Recursos[i].Left == x_shape && funcoes.Recursos[i].Top == y_shape)
+                        if (Data.GetInstance().Recursos[i].Left == x_shape && Data.GetInstance().Recursos[i].Top == y_shape)
                         {
-                            IDElement = funcoes.Recursos[i].Id;
+                            IDElement = Data.GetInstance().Recursos[i].Id;
                             break;
                         }
                     }
@@ -403,22 +404,22 @@ namespace Wpf_DeadLock
                 //Label
                 if (source is Label)
                 {
-                    for (int i = 0; i < funcoes.Processos.Count; i++)
+                    for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
                     {
-                        if (Canvas.GetLeft(funcoes.Processos[i].IdentificationText) == x_shape && Canvas.GetTop(funcoes.Processos[i].IdentificationText) == y_shape)
+                        if (Canvas.GetLeft(Data.GetInstance().Processos[i].IdentificationText) == x_shape && Canvas.GetTop(Data.GetInstance().Processos[i].IdentificationText) == y_shape)
                         {
-                            IDElement = funcoes.Processos[i].Id;
+                            IDElement = Data.GetInstance().Processos[i].Id;
                             ProcessoBool = true;
                             break;
                         }
                     }
                     if (IDElement == -1)
                     {
-                        for (int i = 0; i < funcoes.Recursos.Count; i++)
+                        for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
                         {
-                            if (Canvas.GetLeft(funcoes.Recursos[i].IdentificationText) == x_shape && Canvas.GetTop(funcoes.Recursos[i].IdentificationText) == y_shape)
+                            if (Canvas.GetLeft(Data.GetInstance().Recursos[i].IdentificationText) == x_shape && Canvas.GetTop(Data.GetInstance().Recursos[i].IdentificationText) == y_shape)
                             {
-                                IDElement = funcoes.Recursos[i].Id;
+                                IDElement = Data.GetInstance().Recursos[i].Id;
                                 ProcessoBool = false;
                                 break;
                             }
@@ -438,21 +439,21 @@ namespace Wpf_DeadLock
                 //Processo
                 if (source is System.Windows.Shapes.Rectangle)
                 {
-                    for (int i = 0; i < funcoes.Processos.Count; i++)
+                    for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
                     {
-                        if (funcoes.Processos[i].Id == IDElement)
+                        if (Data.GetInstance().Processos[i].Id == IDElement)
                         {
-                            funcoes.Processos[i].Left = x_shape;
-                            funcoes.Processos[i].Top = y_shape;
+                            Data.GetInstance().Processos[i].Left = x_shape;
+                            Data.GetInstance().Processos[i].Top = y_shape;
 
                             for (int q = 0; q < CanvasMaroto.Children.Count; q++)
                             {
                                 if (CanvasMaroto.Children[q] is Label)
                                 {
-                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString() == "P" + funcoes.Processos[i].Id)
+                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString() == "P" + Data.GetInstance().Processos[i].Id)
                                     {
-                                        Canvas.SetLeft(CanvasMaroto.Children[q], funcoes.Processos[i].Left + 10);
-                                        Canvas.SetTop(CanvasMaroto.Children[q], funcoes.Processos[i].Top - 2);
+                                        Canvas.SetLeft(CanvasMaroto.Children[q], Data.GetInstance().Processos[i].Left + 10);
+                                        Canvas.SetTop(CanvasMaroto.Children[q], Data.GetInstance().Processos[i].Top - 2);
                                         break;
                                     }
                                 }
@@ -465,21 +466,21 @@ namespace Wpf_DeadLock
                 //Recurso
                 if (source is System.Windows.Shapes.Ellipse)
                 {
-                    for (int i = 0; i < funcoes.Recursos.Count; i++)
+                    for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
                     {
-                        if (funcoes.Recursos[i].Id == IDElement)
+                        if (Data.GetInstance().Recursos[i].Id == IDElement)
                         {
-                            funcoes.Recursos[i].Left = x_shape;
-                            funcoes.Recursos[i].Top = y_shape;
+                            Data.GetInstance().Recursos[i].Left = x_shape;
+                            Data.GetInstance().Recursos[i].Top = y_shape;
 
                             for (int q = 0; q < CanvasMaroto.Children.Count; q++)
                             {
                                 if (CanvasMaroto.Children[q] is Label)
                                 {
-                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString().Contains("R" + funcoes.Recursos[i].Id))
+                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString().Contains("R" + Data.GetInstance().Recursos[i].Id))
                                     {
-                                        Canvas.SetLeft(CanvasMaroto.Children[q], funcoes.Recursos[i].Left + 10);
-                                        Canvas.SetTop(CanvasMaroto.Children[q], funcoes.Recursos[i].Top - 2);
+                                        Canvas.SetLeft(CanvasMaroto.Children[q], Data.GetInstance().Recursos[i].Left + 10);
+                                        Canvas.SetTop(CanvasMaroto.Children[q], Data.GetInstance().Recursos[i].Top - 2);
                                         break;
                                     }
                                 }
@@ -494,26 +495,26 @@ namespace Wpf_DeadLock
                 {
                     if (ProcessoBool)
                     {
-                        for (int i = 0; i < funcoes.Processos.Count; i++)
+                        for (int i = 0; i < Data.GetInstance().Processos.Count; i++)
                         {
-                            if (funcoes.Processos[i].Id == IDElement)
+                            if (Data.GetInstance().Processos[i].Id == IDElement)
                             {
                                 for (int q = 0; q < CanvasMaroto.Children.Count; q++)
                                 {
                                     if (CanvasMaroto.Children[q] is System.Windows.Shapes.Rectangle)
                                     {
-                                        if (Canvas.GetLeft(CanvasMaroto.Children[q]) == funcoes.Processos[i].Left &&
-                                            Canvas.GetTop(CanvasMaroto.Children[q]) == funcoes.Processos[i].Top &&
-                                            ((System.Windows.Shapes.Rectangle)CanvasMaroto.Children[q]).Name == ("P"+funcoes.Processos[i].Id))
+                                        if (Canvas.GetLeft(CanvasMaroto.Children[q]) == Data.GetInstance().Processos[i].Left &&
+                                            Canvas.GetTop(CanvasMaroto.Children[q]) == Data.GetInstance().Processos[i].Top &&
+                                            ((System.Windows.Shapes.Rectangle)CanvasMaroto.Children[q]).Name == ("P"+Data.GetInstance().Processos[i].Id))
                                         {
                                             Canvas.SetLeft(CanvasMaroto.Children[q], (x_shape - 10));
                                             Canvas.SetTop(CanvasMaroto.Children[q], (y_shape + 2));
                                             
-                                            funcoes.Processos[i].Left = x_shape - 10;
-                                            funcoes.Processos[i].Top = y_shape + 2;
+                                            Data.GetInstance().Processos[i].Left = x_shape - 10;
+                                            Data.GetInstance().Processos[i].Top = y_shape + 2;
 
-                                            Canvas.SetLeft(funcoes.Processos[i].IdentificationText, x_shape);
-                                            Canvas.SetTop(funcoes.Processos[i].IdentificationText, y_shape);   
+                                            Canvas.SetLeft(Data.GetInstance().Processos[i].IdentificationText, x_shape);
+                                            Canvas.SetTop(Data.GetInstance().Processos[i].IdentificationText, y_shape);   
 
                                             break;
                                         }
@@ -524,27 +525,27 @@ namespace Wpf_DeadLock
                     }
                     else
                     {
-                        for (int i = 0; i < funcoes.Recursos.Count; i++)
+                        for (int i = 0; i < Data.GetInstance().Recursos.Count; i++)
                         {
-                            if (funcoes.Recursos[i].Id == IDElement)
+                            if (Data.GetInstance().Recursos[i].Id == IDElement)
                             {
                                 for (int q = 0; q < CanvasMaroto.Children.Count; q++)
                                 {
                                     if (CanvasMaroto.Children[q] is System.Windows.Shapes.Ellipse)
                                     {
-                                        if (Canvas.GetLeft(CanvasMaroto.Children[q]) == funcoes.Recursos[i].Left &&
-                                            Canvas.GetTop(CanvasMaroto.Children[q]) == funcoes.Recursos[i].Top &&
-                                            ((System.Windows.Shapes.Ellipse)CanvasMaroto.Children[q]).Name == ("R" + funcoes.Recursos[i].Id))
+                                        if (Canvas.GetLeft(CanvasMaroto.Children[q]) == Data.GetInstance().Recursos[i].Left &&
+                                            Canvas.GetTop(CanvasMaroto.Children[q]) == Data.GetInstance().Recursos[i].Top &&
+                                            ((System.Windows.Shapes.Ellipse)CanvasMaroto.Children[q]).Name == ("R" + Data.GetInstance().Recursos[i].Id))
                                         {
                                             Canvas.SetLeft(CanvasMaroto.Children[q], (x_shape - 10));
                                             Canvas.SetTop(CanvasMaroto.Children[q], (y_shape + 2));
 
 
-                                            funcoes.Recursos[i].Left = x_shape - 10;
-                                            funcoes.Recursos[i].Top = y_shape + 2;
+                                            Data.GetInstance().Recursos[i].Left = x_shape - 10;
+                                            Data.GetInstance().Recursos[i].Top = y_shape + 2;
 
-                                            Canvas.SetLeft(funcoes.Recursos[i].IdentificationText, x_shape);
-                                            Canvas.SetTop(funcoes.Recursos[i].IdentificationText, y_shape);
+                                            Canvas.SetLeft(Data.GetInstance().Recursos[i].IdentificationText, x_shape);
+                                            Canvas.SetTop(Data.GetInstance().Recursos[i].IdentificationText, y_shape);
 
                                             break;
                                         }
