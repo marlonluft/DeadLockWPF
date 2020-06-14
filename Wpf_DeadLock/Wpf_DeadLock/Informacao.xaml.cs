@@ -184,7 +184,7 @@ namespace Wpf_DeadLock
                 //Inicializa as listas
                 funcoes.Processos = new List<Processos>();
                 funcoes.Recursos = new List<Recursos>();
-                funcoes.Linhas = new List<Linha>();
+                funcoes.Linhas = new List<LineConnection>();
                 funcoes.Elementos = new List<UIElement>();
 
                 //Criar e adiciona a lista os recursos

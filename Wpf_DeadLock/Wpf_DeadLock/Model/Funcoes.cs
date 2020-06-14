@@ -22,7 +22,7 @@ namespace Wpf_DeadLock.Model
         public List<Processos> Processos { get; set; }
         public List<Recursos> Recursos { get; set; }
 
-        public List<Linha> Linhas { get; set; }
+        public List<LineConnection> Linhas { get; set; }
         public List<UIElement> Elementos { get; set; }
 
         //============== Funções ====================================
@@ -124,16 +124,16 @@ namespace Wpf_DeadLock.Model
 
                     foreach (var item in Linhas)
                     {
-                        if (item.ProcessoID == ProcessoID &&
-                            item.RecursoID == RecursoID &&
-                            item.Processo == Processo)
+                        if (item.ProcessId == ProcessoID &&
+                            item.ResourceId == RecursoID &&
+                            item.Process == Processo)
                         {
-                            if(item.Path.Stroke != Strokes[2])
+                            if(item.LineDraw.Stroke != Strokes[2])
                             {
                                 MessageBox.Show("Possivel DeadLock");
                             }
 
-                            item.Path.Stroke = Strokes[2];                            
+                            item.LineDraw.Stroke = Strokes[2];                            
                             break;
                         }
                     }
@@ -143,9 +143,9 @@ namespace Wpf_DeadLock.Model
 
                     foreach (var item in Linhas)
                     {
-                        if (item.ProcessoID == ProcessoID &&
-                            item.RecursoID == RecursoID &&
-                            item.Processo == Processo)
+                        if (item.ProcessId == ProcessoID &&
+                            item.ResourceId == RecursoID &&
+                            item.Process == Processo)
                         {
                             Linhas.Remove(item);
                             MessageBox.Show("Linha irá ser Removida");
@@ -181,8 +181,8 @@ namespace Wpf_DeadLock.Model
 
                 for (int i = 0; i < Linhas.Count; i++)
                 {
-                    if (Linhas[i].ProcessoID == ProcessoID &&
-                    Linhas[i].RecursoID == RecursoID)
+                    if (Linhas[i].ProcessId == ProcessoID &&
+                    Linhas[i].ResourceId == RecursoID)
                     {
                         repetido++;//Espaçamento entre linhas repetidas...
                     }
@@ -321,7 +321,7 @@ namespace Wpf_DeadLock.Model
                 }
 
                 cont++;
-                Linha linha = new Linha { ID = cont, ProcessoID = ProcessoID, RecursoID = RecursoID, Path = p, Processo = Processo };
+                LineConnection linha = new LineConnection { Id = cont, ProcessId = ProcessoID, ResourceId = RecursoID, LineDraw = p, Process = Processo };
                 Linhas.Add(linha);
             }
         }

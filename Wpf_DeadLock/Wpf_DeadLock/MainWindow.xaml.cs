@@ -185,7 +185,7 @@ namespace Wpf_DeadLock
 
             foreach (var item in funcoes.Linhas)
             {
-                CanvasMaroto.Children.Add(item.Path);
+                CanvasMaroto.Children.Add(item.LineDraw);
             }            
         }
 
