@@ -84,8 +84,8 @@ namespace Wpf_DeadLock.Model
             }
         }
 
-        private int cont = 0;
-        public void CriarLinha(int ProcessoID, int RecursoID, bool? Deadlock, bool Processo)
+        private static int cont = 0;
+        public static void CriarLinha(int ProcessoID, int RecursoID, bool? Deadlock, bool Processo)
         {
             SolidColorBrush[] Strokes = { Brushes.Black, Brushes.Blue, Brushes.Red };
             int x = 0;
