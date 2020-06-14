@@ -40,7 +40,7 @@ namespace Wpf_DeadLock
             {
                 for (int x = 0; x < Data.GetInstance().Recursos[i].NeccesariesProcesses.Count; x++)
                 {
-                    Funcoes.CriarLinha(Data.GetInstance().Recursos[i].NeccesariesProcesses[x], Data.GetInstance().Recursos[i].Id, null, false);
+                    Funcoes.CreateLine(Data.GetInstance().Recursos[i].NeccesariesProcesses[x], Data.GetInstance().Recursos[i].Id, false);
                 }
             }
 
@@ -48,7 +48,7 @@ namespace Wpf_DeadLock
             {
                 for (int x = 0; x < Data.GetInstance().Processos[i].NeccesariesResources.Count; x++)
                 {
-                    Funcoes.CriarLinha(Data.GetInstance().Processos[i].Id, Data.GetInstance().Processos[i].NeccesariesResources[x], null, true);
+                    Funcoes.CreateLine(Data.GetInstance().Processos[i].Id, Data.GetInstance().Processos[i].NeccesariesResources[x], true);
                 }
             }
             AtualizarCanvas();            

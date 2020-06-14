@@ -72,7 +72,7 @@ namespace Wpf_DeadLock.Library.Service
                             {
                                 if (Data.GetInstance().Recursos[x].IsAvailable)
                                 {
-                                    Funcoes.CriarLinha(Data.GetInstance().Processos[i].Id, Data.GetInstance().Recursos[x].Id, false, true);
+                                    Funcoes.UpdateLine(Data.GetInstance().Processos[i].Id, Data.GetInstance().Recursos[x].Id, false, true);
                                     Data.GetInstance().Processos[i].NeccesariesResources.RemoveAt(q);
                                     refreshCanvas();
                                     break;
@@ -109,7 +109,7 @@ namespace Wpf_DeadLock.Library.Service
                                 //Verificado se o processo necessário está diponivel, se não tentará resolver o processo
                                 if (Data.GetInstance().Processos[x].IsAvailable)
                                 {
-                                    Funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[i].Id, false, false);
+                                    Funcoes.UpdateLine(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[i].Id, false, false);
                                     Data.GetInstance().Recursos[i].NeccesariesProcesses.RemoveAt(q);
                                     refreshCanvas();
                                     break;
@@ -149,14 +149,14 @@ namespace Wpf_DeadLock.Library.Service
                                 {
                                     if (Data.GetInstance().Recursos[x].IsAvailable)
                                     {
-                                        Funcoes.CriarLinha(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, false, true);
+                                        Funcoes.UpdateLine(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, false, true);
                                         Data.GetInstance().Processos[t].NeccesariesResources.RemoveAt(q);
                                         refreshCanvas();
                                         break;
                                     }
                                     else
                                     {
-                                        Funcoes.CriarLinha(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, true, true);
+                                        Funcoes.UpdateLine(Data.GetInstance().Processos[t].Id, Data.GetInstance().Recursos[x].Id, true, true);
                                         refreshCanvas();
                                     }
                                 }
@@ -190,14 +190,14 @@ namespace Wpf_DeadLock.Library.Service
                                 {
                                     if (Data.GetInstance().Processos[x].IsAvailable)
                                     {
-                                        Funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, false, false);
+                                        Funcoes.UpdateLine(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, false, false);
                                         Data.GetInstance().Recursos[t].NeccesariesProcesses.RemoveAt(q);
                                         refreshCanvas();
                                         break;
                                     }
                                     else
                                     {
-                                        Funcoes.CriarLinha(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, true, false);
+                                        Funcoes.UpdateLine(Data.GetInstance().Processos[x].Id, Data.GetInstance().Recursos[t].Id, true, false);
                                         refreshCanvas();
                                     }
                                 }
