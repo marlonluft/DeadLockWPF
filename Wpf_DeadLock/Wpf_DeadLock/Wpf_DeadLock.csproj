@@ -140,9 +140,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\Funcoes.cs" />
-    <Compile Include="Model\Linha.cs" />
-    <Compile Include="Model\Processos.cs" />
-    <Compile Include="Model\Recursos.cs" />
+    <Compile Include="Library\Entity\LineConnection.cs" />
+    <Compile Include="Library\Entity\Process.cs" />
+    <Compile Include="Library\Entity\Resources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -193,6 +193,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

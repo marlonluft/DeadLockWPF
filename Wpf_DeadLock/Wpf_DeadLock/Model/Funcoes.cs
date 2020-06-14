@@ -6,6 +6,7 @@ using System.Windows.Shapes;
 using System.Windows.Media;
 using System.Windows;
 using System.Windows.Controls;
+using Wpf_DeadLock.Library.Entity;
 
 namespace Wpf_DeadLock.Model
 {
@@ -19,10 +20,10 @@ namespace Wpf_DeadLock.Model
         public int Recursos_Necessitam_Processos { get; set; }
 
         //============== Listas =====================================
-        public List<Processos> Processos { get; set; }
-        public List<Recursos> Recursos { get; set; }
+        public List<Process> Processos { get; set; }
+        public List<Resources> Recursos { get; set; }
 
-        public List<Linha> Linhas { get; set; }
+        public List<LineConnection> Linhas { get; set; }
         public List<UIElement> Elementos { get; set; }
 
         //============== Funções ====================================
@@ -44,16 +45,16 @@ namespace Wpf_DeadLock.Model
                 if (Processos[i].Left == left && Processos[i].Top == top)
                 {
                     Label lbl = new Label();
-                    lbl.Content = "P" + Processos[i].ID;
+                    lbl.Content = "P" + Processos[i].Id;
                     Canvas.SetLeft(lbl, left + 10);
                     Canvas.SetTop(lbl, top - 2);
 
-                    rectangle.Name = ("P" + Processos[i].ID);
+                    rectangle.Name = ("P" + Processos[i].Id);
                     Elementos.Add(rectangle);
 
                     Elementos.Add(lbl);
 
-                    Processos[i].Texto = lbl;
+                    Processos[i].IdentificationText = lbl;
                     break;
                 }
             }
@@ -76,7 +77,7 @@ namespace Wpf_DeadLock.Model
                 if (Recursos[i].Left == left && Recursos[i].Top == top)
                 {
                     Label lbl = new Label();
-                    lbl.Content = "R" + Recursos[i].ID + "\n";
+                    lbl.Content = "R" + Recursos[i].Id + "\n";
                     Canvas.SetLeft(lbl, left + 10);
                     Canvas.SetTop(lbl, top - 2);
 
@@ -85,12 +86,12 @@ namespace Wpf_DeadLock.Model
                         lbl.Content += "•";
                     }
 
-                    ellipse.Name = ("R" + Recursos[i].ID);
+                    ellipse.Name = ("R" + Recursos[i].Id);
                     Elementos.Add(ellipse);
 
                     Elementos.Add(lbl);
 
-                    Recursos[i].Texto = lbl;
+                    Recursos[i].IdentificationText = lbl;
                     break;
                 }
             }
@@ -104,8 +105,8 @@ namespace Wpf_DeadLock.Model
             int repetido = 0;
 
             /*=================================*/
-            Wpf_DeadLock.Model.Processos processoM = new Processos();
-            Wpf_DeadLock.Model.Recursos recursoM = new Recursos();
+            var processoM = new Process();
+            var recursoM = new Resources();
 
             /*=================================*/
             switch (Processo)
@@ -124,16 +125,16 @@ namespace Wpf_DeadLock.Model
 
                     foreach (var item in Linhas)
                     {
-                        if (item.ProcessoID == ProcessoID &&
-                            item.RecursoID == RecursoID &&
-                            item.Processo == Processo)
+                        if (item.ProcessId == ProcessoID &&
+                            item.ResourceId == RecursoID &&
+                            item.Process == Processo)
                         {
-                            if(item.Path.Stroke != Strokes[2])
+                            if(item.LineDraw.Stroke != Strokes[2])
                             {
                                 MessageBox.Show("Possivel DeadLock");
                             }
 
-                            item.Path.Stroke = Strokes[2];                            
+                            item.LineDraw.Stroke = Strokes[2];                            
                             break;
                         }
                     }
@@ -143,9 +144,9 @@ namespace Wpf_DeadLock.Model
 
                     foreach (var item in Linhas)
                     {
-                        if (item.ProcessoID == ProcessoID &&
-                            item.RecursoID == RecursoID &&
-                            item.Processo == Processo)
+                        if (item.ProcessId == ProcessoID &&
+                            item.ResourceId == RecursoID &&
+                            item.Process == Processo)
                         {
                             Linhas.Remove(item);
                             MessageBox.Show("Linha irá ser Removida");
@@ -159,7 +160,7 @@ namespace Wpf_DeadLock.Model
             {
                 foreach (var item in Processos)
                 {
-                    if (item.ID == ProcessoID)
+                    if (item.Id == ProcessoID)
                     {
                         processoM = item;
                         break;
@@ -167,7 +168,7 @@ namespace Wpf_DeadLock.Model
                 }
                 foreach (var item in Recursos)
                 {
-                    if (item.ID == RecursoID)
+                    if (item.Id == RecursoID)
                     {
                         recursoM = item;
                         break;
@@ -181,8 +182,8 @@ namespace Wpf_DeadLock.Model
 
                 for (int i = 0; i < Linhas.Count; i++)
                 {
-                    if (Linhas[i].ProcessoID == ProcessoID &&
-                    Linhas[i].RecursoID == RecursoID)
+                    if (Linhas[i].ProcessId == ProcessoID &&
+                    Linhas[i].ResourceId == RecursoID)
                     {
                         repetido++;//Espaçamento entre linhas repetidas...
                     }
@@ -321,7 +322,7 @@ namespace Wpf_DeadLock.Model
                 }
 
                 cont++;
-                Linha linha = new Linha { ID = cont, ProcessoID = ProcessoID, RecursoID = RecursoID, Path = p, Processo = Processo };
+                LineConnection linha = new LineConnection { Id = cont, ProcessId = ProcessoID, ResourceId = RecursoID, LineDraw = p, Process = Processo };
                 Linhas.Add(linha);
             }
         }
@@ -338,7 +339,7 @@ namespace Wpf_DeadLock.Model
             }
             for (int i = 0; i < Recursos.Count; i++)
             {
-                CriarRecurso(Recursos[i].Top, Recursos[i].Left, Recursos[i].Pontos_Disponivel);
+                CriarRecurso(Recursos[i].Top, Recursos[i].Left, Recursos[i].AvailablePoints);
             }
         }
     }
