@@ -44,9 +44,9 @@ namespace Wpf_DeadLock
 
             for (int i = 0; i < funcoes.Processos.Count; i++)
             {
-                for (int x = 0; x < funcoes.Processos[i].Recursos_Necessarios.Count; x++)
+                for (int x = 0; x < funcoes.Processos[i].NeccesariesResources.Count; x++)
                 {
-                    funcoes.CriarLinha(funcoes.Processos[i].ID, funcoes.Processos[i].Recursos_Necessarios[x], null, true);
+                    funcoes.CriarLinha(funcoes.Processos[i].Id, funcoes.Processos[i].NeccesariesResources[x], null, true);
                 }
             }
             AtualizarCanvas();            
@@ -66,7 +66,7 @@ namespace Wpf_DeadLock
                 int qtdNecessaria = 0;
                 for (int x = 0; x < funcoes.Processos.Count; x++)
                 {
-                    if (funcoes.Processos[x].Recursos_Necessarios.Count > 0)
+                    if (funcoes.Processos[x].NeccesariesResources.Count > 0)
                     {
                         qtdNecessaria++;
                     }
@@ -104,11 +104,11 @@ namespace Wpf_DeadLock
             bool deadLock = false;
             for (int i = 0; i < funcoes.Processos.Count; i++)
             {
-                if (funcoes.Processos[i].Recursos_Necessarios.Count > 0)
+                if (funcoes.Processos[i].NeccesariesResources.Count > 0)
                 {
-                    for (int x = 0; x < funcoes.Processos[i].Recursos_Necessarios.Count; x++)
+                    for (int x = 0; x < funcoes.Processos[i].NeccesariesResources.Count; x++)
                     {
-                        builder.Append("- O Processo " + funcoes.Processos[i].ID + " necessita do Recurso " + funcoes.Processos[i].Recursos_Necessarios[x] + " \n");
+                        builder.Append("- O Processo " + funcoes.Processos[i].Id + " necessita do Recurso " + funcoes.Processos[i].NeccesariesResources[x] + " \n");
                     }
 
                     deadLock = true;
@@ -198,18 +198,18 @@ namespace Wpf_DeadLock
         {
             for (int i = 0; i < funcoes.Processos.Count; i++)
             {
-                if (funcoes.Processos[i].Recursos_Necessarios.Count > 0)
+                if (funcoes.Processos[i].NeccesariesResources.Count > 0)
                 {
-                    for (int q = 0; q < funcoes.Processos[i].Recursos_Necessarios.Count; q++)
+                    for (int q = 0; q < funcoes.Processos[i].NeccesariesResources.Count; q++)
                     {
                         for (int x = 0; x < funcoes.Recursos.Count; x++)
                         {
-                            if (funcoes.Processos[i].Recursos_Necessarios[q] == funcoes.Recursos[x].Id)
+                            if (funcoes.Processos[i].NeccesariesResources[q] == funcoes.Recursos[x].Id)
                             {
                                 if (funcoes.Recursos[x].IsAvailable)
                                 {
-                                    funcoes.CriarLinha(funcoes.Processos[i].ID, funcoes.Recursos[x].Id, false, true);
-                                    funcoes.Processos[i].Recursos_Necessarios.RemoveAt(q);
+                                    funcoes.CriarLinha(funcoes.Processos[i].Id, funcoes.Recursos[x].Id, false, true);
+                                    funcoes.Processos[i].NeccesariesResources.RemoveAt(q);
                                     AtualizarCanvas();
                                     //MessageBox.Show("Linha removida");
                                     break;
@@ -241,12 +241,12 @@ namespace Wpf_DeadLock
                     {
                         for (int x = 0; x < funcoes.Processos.Count; x++)
                         {
-                            if (funcoes.Recursos[i].NeccesariesProcesses[q] == funcoes.Processos[x].ID)
+                            if (funcoes.Recursos[i].NeccesariesProcesses[q] == funcoes.Processos[x].Id)
                             {
                                 //Verificado se o processo necessário está diponivel, se não tentará resolver o processo
-                                if (funcoes.Processos[x].Disponivel)
+                                if (funcoes.Processos[x].IsAvailable)
                                 {
-                                    funcoes.CriarLinha(funcoes.Processos[x].ID, funcoes.Recursos[i].Id, false, false);
+                                    funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[i].Id, false, false);
                                     funcoes.Recursos[i].NeccesariesProcesses.RemoveAt(q);
                                     AtualizarCanvas();
                                     //MessageBox.Show("Linha removida");
@@ -254,9 +254,9 @@ namespace Wpf_DeadLock
                                 }
                                 else
                                 {
-                                    for (int m = 0; m < funcoes.Processos[x].Recursos_Necessarios.Count; m++)
+                                    for (int m = 0; m < funcoes.Processos[x].NeccesariesResources.Count; m++)
                                     {
-                                        funcoes.Processos = Processo_Unico(funcoes.Processos[x].Recursos_Necessarios[m]);
+                                        funcoes.Processos = Processo_Unico(funcoes.Processos[x].NeccesariesResources[m]);
                                     }
                                 }
                             }
@@ -271,31 +271,31 @@ namespace Wpf_DeadLock
         /// </summary>
         /// <param name="ID_Processo">Id do processo a ser verificado</param>
         /// <returns></returns>
-        private List<Processos> Processo_Unico(int ID_Processo)
+        private List<Process> Processo_Unico(int ID_Processo)
         {
             for (int t = 0; t < funcoes.Processos.Count; t++)
             {
-                if (funcoes.Processos[t].ID == ID_Processo)
+                if (funcoes.Processos[t].Id == ID_Processo)
                 {
-                    if (funcoes.Processos[t].Recursos_Necessarios.Count > 0)
+                    if (funcoes.Processos[t].NeccesariesResources.Count > 0)
                     {
-                        for (int q = 0; q < funcoes.Processos[t].Recursos_Necessarios.Count; q++)
+                        for (int q = 0; q < funcoes.Processos[t].NeccesariesResources.Count; q++)
                         {
                             for (int x = 0; x < funcoes.Recursos.Count; x++)
                             {
-                                if (funcoes.Processos[t].Recursos_Necessarios[q] == funcoes.Recursos[x].Id)
+                                if (funcoes.Processos[t].NeccesariesResources[q] == funcoes.Recursos[x].Id)
                                 {
                                     if (funcoes.Recursos[x].IsAvailable)
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[t].ID, funcoes.Recursos[x].Id, false, true);
-                                        funcoes.Processos[t].Recursos_Necessarios.RemoveAt(q);
+                                        funcoes.CriarLinha(funcoes.Processos[t].Id, funcoes.Recursos[x].Id, false, true);
+                                        funcoes.Processos[t].NeccesariesResources.RemoveAt(q);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Linha removida");
                                         break;
                                     }
                                     else
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[t].ID, funcoes.Recursos[x].Id, true, true);
+                                        funcoes.CriarLinha(funcoes.Processos[t].Id, funcoes.Recursos[x].Id, true, true);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Possivel DeadLock");
                                     }                                    
@@ -326,11 +326,11 @@ namespace Wpf_DeadLock
                         {
                             for (int x = 0; x < funcoes.Processos.Count; x++)
                             {
-                                if (funcoes.Recursos[t].NeccesariesProcesses[q] == funcoes.Processos[x].ID)
+                                if (funcoes.Recursos[t].NeccesariesProcesses[q] == funcoes.Processos[x].Id)
                                 {
-                                    if (funcoes.Processos[x].Disponivel)
+                                    if (funcoes.Processos[x].IsAvailable)
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[x].ID, funcoes.Recursos[t].Id, false, false);
+                                        funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[t].Id, false, false);
                                         funcoes.Recursos[t].NeccesariesProcesses.RemoveAt(q);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Linha removida");
@@ -338,7 +338,7 @@ namespace Wpf_DeadLock
                                     }
                                     else
                                     {
-                                        funcoes.CriarLinha(funcoes.Processos[x].ID, funcoes.Recursos[t].Id, true, false);
+                                        funcoes.CriarLinha(funcoes.Processos[x].Id, funcoes.Recursos[t].Id, true, false);
                                         AtualizarCanvas();
                                         //MessageBox.Show("Possivel DeadLock");
                                     }                                                                        
@@ -381,7 +381,7 @@ namespace Wpf_DeadLock
                     {
                         if (funcoes.Processos[i].Left == x_shape && funcoes.Processos[i].Top == y_shape)
                         {
-                            IDElement = funcoes.Processos[i].ID;
+                            IDElement = funcoes.Processos[i].Id;
                             break;
                         }
                     }
@@ -405,9 +405,9 @@ namespace Wpf_DeadLock
                 {
                     for (int i = 0; i < funcoes.Processos.Count; i++)
                     {
-                        if (Canvas.GetLeft(funcoes.Processos[i].Texto) == x_shape && Canvas.GetTop(funcoes.Processos[i].Texto) == y_shape)
+                        if (Canvas.GetLeft(funcoes.Processos[i].IdentificationText) == x_shape && Canvas.GetTop(funcoes.Processos[i].IdentificationText) == y_shape)
                         {
-                            IDElement = funcoes.Processos[i].ID;
+                            IDElement = funcoes.Processos[i].Id;
                             ProcessoBool = true;
                             break;
                         }
@@ -440,7 +440,7 @@ namespace Wpf_DeadLock
                 {
                     for (int i = 0; i < funcoes.Processos.Count; i++)
                     {
-                        if (funcoes.Processos[i].ID == IDElement)
+                        if (funcoes.Processos[i].Id == IDElement)
                         {
                             funcoes.Processos[i].Left = x_shape;
                             funcoes.Processos[i].Top = y_shape;
@@ -449,7 +449,7 @@ namespace Wpf_DeadLock
                             {
                                 if (CanvasMaroto.Children[q] is Label)
                                 {
-                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString() == "P" + funcoes.Processos[i].ID)
+                                    if (((Label)CanvasMaroto.Children[q]).Content.ToString() == "P" + funcoes.Processos[i].Id)
                                     {
                                         Canvas.SetLeft(CanvasMaroto.Children[q], funcoes.Processos[i].Left + 10);
                                         Canvas.SetTop(CanvasMaroto.Children[q], funcoes.Processos[i].Top - 2);
@@ -496,7 +496,7 @@ namespace Wpf_DeadLock
                     {
                         for (int i = 0; i < funcoes.Processos.Count; i++)
                         {
-                            if (funcoes.Processos[i].ID == IDElement)
+                            if (funcoes.Processos[i].Id == IDElement)
                             {
                                 for (int q = 0; q < CanvasMaroto.Children.Count; q++)
                                 {
@@ -504,7 +504,7 @@ namespace Wpf_DeadLock
                                     {
                                         if (Canvas.GetLeft(CanvasMaroto.Children[q]) == funcoes.Processos[i].Left &&
                                             Canvas.GetTop(CanvasMaroto.Children[q]) == funcoes.Processos[i].Top &&
-                                            ((System.Windows.Shapes.Rectangle)CanvasMaroto.Children[q]).Name == ("P"+funcoes.Processos[i].ID))
+                                            ((System.Windows.Shapes.Rectangle)CanvasMaroto.Children[q]).Name == ("P"+funcoes.Processos[i].Id))
                                         {
                                             Canvas.SetLeft(CanvasMaroto.Children[q], (x_shape - 10));
                                             Canvas.SetTop(CanvasMaroto.Children[q], (y_shape + 2));
@@ -512,8 +512,8 @@ namespace Wpf_DeadLock
                                             funcoes.Processos[i].Left = x_shape - 10;
                                             funcoes.Processos[i].Top = y_shape + 2;
 
-                                            Canvas.SetLeft(funcoes.Processos[i].Texto, x_shape);
-                                            Canvas.SetTop(funcoes.Processos[i].Texto, y_shape);   
+                                            Canvas.SetLeft(funcoes.Processos[i].IdentificationText, x_shape);
+                                            Canvas.SetTop(funcoes.Processos[i].IdentificationText, y_shape);   
 
                                             break;
                                         }

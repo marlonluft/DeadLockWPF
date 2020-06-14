@@ -20,7 +20,7 @@ namespace Wpf_DeadLock.Model
         public int Recursos_Necessitam_Processos { get; set; }
 
         //============== Listas =====================================
-        public List<Processos> Processos { get; set; }
+        public List<Process> Processos { get; set; }
         public List<Resources> Recursos { get; set; }
 
         public List<LineConnection> Linhas { get; set; }
@@ -45,16 +45,16 @@ namespace Wpf_DeadLock.Model
                 if (Processos[i].Left == left && Processos[i].Top == top)
                 {
                     Label lbl = new Label();
-                    lbl.Content = "P" + Processos[i].ID;
+                    lbl.Content = "P" + Processos[i].Id;
                     Canvas.SetLeft(lbl, left + 10);
                     Canvas.SetTop(lbl, top - 2);
 
-                    rectangle.Name = ("P" + Processos[i].ID);
+                    rectangle.Name = ("P" + Processos[i].Id);
                     Elementos.Add(rectangle);
 
                     Elementos.Add(lbl);
 
-                    Processos[i].Texto = lbl;
+                    Processos[i].IdentificationText = lbl;
                     break;
                 }
             }
@@ -105,7 +105,7 @@ namespace Wpf_DeadLock.Model
             int repetido = 0;
 
             /*=================================*/
-            Wpf_DeadLock.Model.Processos processoM = new Processos();
+            var processoM = new Process();
             var recursoM = new Resources();
 
             /*=================================*/
@@ -160,7 +160,7 @@ namespace Wpf_DeadLock.Model
             {
                 foreach (var item in Processos)
                 {
-                    if (item.ID == ProcessoID)
+                    if (item.Id == ProcessoID)
                     {
                         processoM = item;
                         break;
