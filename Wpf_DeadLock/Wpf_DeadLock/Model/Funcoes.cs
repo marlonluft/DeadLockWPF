@@ -88,36 +88,26 @@ namespace Wpf_DeadLock.Model
 
         public static void UpdateLine(int processId, int resourceId, bool isDeadLock, bool process)
         {
-            if (isDeadLock)
-            {
-                foreach (var item in Data.GetInstance().Linhas)
-                {
-                    if (item.ProcessId == processId &&
-                        item.ResourceId == resourceId &&
-                        item.Process == process)
-                    {
-                        if (item.LineDraw.Stroke != Brushes.Red)
-                        {
-                            MessageBox.Show("Possivel DeadLock");
-                        }
+            var line = Data.GetInstance().Linhas.Where(x =>
+                    x.ProcessId == processId &&
+                    x.ResourceId == resourceId &&
+                    x.Process == process).FirstOrDefault();
 
-                        item.LineDraw.Stroke = Brushes.Red;
-                        break;
-                    }
-                }
-            }
-            else
+            if (line != null)
             {
-                foreach (var item in Data.GetInstance().Linhas)
+                if (isDeadLock)
                 {
-                    if (item.ProcessId == processId &&
-                        item.ResourceId == resourceId &&
-                        item.Process == process)
+                    if (line.LineDraw.Stroke != Brushes.Red)
                     {
-                        Data.GetInstance().Linhas.Remove(item);
-                        MessageBox.Show("Linha irá ser Removida");
-                        break;
+                        MessageBox.Show("Possivel DeadLock");
                     }
+
+                    line.LineDraw.Stroke = Brushes.Red;
+                }
+                else
+                {
+                    Data.GetInstance().Linhas.Remove(line);
+                    MessageBox.Show("Linha irá ser Removida");
                 }
             }
         }
