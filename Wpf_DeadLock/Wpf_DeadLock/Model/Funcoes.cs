@@ -149,7 +149,7 @@ namespace Wpf_DeadLock.Model
                 }
             }
 
-            Path p = new Path
+            Path linePath = new Path
             {
                 Stroke = process ? Brushes.Black : Brushes.Blue,
                 StrokeThickness = 2
@@ -172,7 +172,7 @@ namespace Wpf_DeadLock.Model
                     if (recursoM.Left > processoM.Left)
                     {
                         //linha direita
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
                             " L " + ((int)((processoM.Left + recursoM.Left) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
                             " L " + recursoM.Left + " " + (recursoM.Top + 20) +
@@ -184,7 +184,7 @@ namespace Wpf_DeadLock.Model
                     else
                     {
                         //linha esquerda
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (processoM.Left) + " " + (processoM.Top + 10) +
                             " L " + ((int)((processoM.Left + (recursoM.Left + 40)) / 2)) + " " + ((int)(((processoM.Top + 10) + (recursoM.Top + 20)) / 2) + (repetido * 5)) +
                             " L " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
@@ -208,7 +208,7 @@ namespace Wpf_DeadLock.Model
                     if (recursoM.Top > (processoM.Top + 50))
                     {
                         //linha baixo
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
                             " L " + ((int)(((processoM.Left + 20) + (recursoM.Left)) / 2) + repetido) + " " + ((int)((recursoM.Top + (processoM.Top + 20)) / 2)) +
                             " L " + (recursoM.Left + 20) + " " + recursoM.Top +
@@ -219,7 +219,7 @@ namespace Wpf_DeadLock.Model
                     else
                     {
                         //linha topo
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (processoM.Left + 20) + " " + processoM.Top +
                             " L " + (((int)((processoM.Left + 20) + (recursoM.Left + 20)) / 2) + repetido) + " " + ((int)(((recursoM.Top + 40) + processoM.Top) / 2)) +
                             " L " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
@@ -238,7 +238,7 @@ namespace Wpf_DeadLock.Model
                     if (processoM.Left > recursoM.Left)
                     {
                         //linha direita
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (recursoM.Left + 40) + " " + (recursoM.Top + 20) +
                             " L " + ((int)((recursoM.Left + processoM.Left) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
                             " L " + processoM.Left + " " + (processoM.Top + 10) +
@@ -250,7 +250,7 @@ namespace Wpf_DeadLock.Model
                     else
                     {
                         //linha esquerda
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (recursoM.Left) + " " + (recursoM.Top + 20) +
                             " L " + ((int)((recursoM.Left + (processoM.Left + 40)) / 2)) + " " + ((int)(((recursoM.Top + 20) + (processoM.Top + 10)) / 2) + (repetido * 5)) +
                             " L " + (processoM.Left + 40) + " " + (processoM.Top + 10) +
@@ -274,7 +274,7 @@ namespace Wpf_DeadLock.Model
                     if (processoM.Top > (recursoM.Top + 50))
                     {
                         //linha baixo
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (recursoM.Left + 20) + " " + (recursoM.Top + 40) +
                             " L " + ((int)(((recursoM.Left + 20) + (processoM.Left)) / 2) + repetido) + " " + ((int)((processoM.Top + (recursoM.Top + 40)) / 2)) +
                             " L " + (processoM.Left + 20) + " " + processoM.Top +
@@ -285,7 +285,7 @@ namespace Wpf_DeadLock.Model
                     else
                     {
                         //linha topo
-                        p.Data = Geometry.Parse(
+                        linePath.Data = Geometry.Parse(
                             "M " + (recursoM.Left + 20) + " " + recursoM.Top +
                             " L " + (((int)((recursoM.Left + 20) + (processoM.Left + 20)) / 2) + repetido) + " " + ((int)(((processoM.Top + 40) + recursoM.Top) / 2)) +
                             " L " + (processoM.Left + 20) + " " + (processoM.Top + 20) +
@@ -296,7 +296,7 @@ namespace Wpf_DeadLock.Model
                 }
 
                 cont++;
-                LineConnection linha = new LineConnection { Id = cont, ProcessId = processId, ResourceId = resourceId, LineDraw = p, Process = process };
+                LineConnection linha = new LineConnection { Id = cont, ProcessId = processId, ResourceId = resourceId, LineDraw = linePath, Process = process };
                 Data.GetInstance().Linhas.Add(linha);
             }
         }
