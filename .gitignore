@@ -3,3 +3,5 @@
 /Wpf_DeadLock/Wpf_DeadLock/*.user
 /Wpf_DeadLock/Wpf_DeadLock/bin
 /Wpf_DeadLock/Wpf_DeadLock/obj
+Wpf_DeadLock/DeadLock.Logic/bin
+Wpf_DeadLock/DeadLock.Logic/obj
