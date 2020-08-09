@@ -1,7 +1,9 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual C# Express 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wpf_DeadLock", "Wpf_DeadLock\Wpf_DeadLock.csproj", "{3FF8981C-4CA6-40F9-B008-AD534F039F1D}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeadLock.ApresentationWPF", "Wpf_DeadLock\DeadLock.ApresentationWPF.csproj", "{3FF8981C-4CA6-40F9-B008-AD534F039F1D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {50D81116-EB32-493E-91D7-F7862592E51F}
 	EndGlobalSection
 EndGlobal
