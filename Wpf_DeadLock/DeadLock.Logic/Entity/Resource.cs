@@ -1,9 +1,27 @@
-﻿using System.Collections.Generic;
+﻿using DeadLock.Logic.Exceptions;
 
 namespace DeadLock.Logic.Entity
 {
     public class Resource : DeadLockObject
     {
-        public List<ResourcePoint> AvailablePoints { get; set; }
+        public Resource(int quantityPoints) : base()
+        {
+            QuantityPoints = quantityPoints;
+            AvailablePoints = quantityPoints;
+        }
+
+        private readonly int QuantityPoints;
+
+        private int AvailablePoints { get; set; }
+
+        internal void LockPoint()
+        {
+            if (AvailablePoints == 0)
+            {
+                throw new LogicException("No points available");
+            }
+
+            AvailablePoints--;
+        }
     }
 }
