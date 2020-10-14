@@ -70,5 +70,46 @@ namespace DeadLock.Logic
 
             process.Dependecies.Add(resource.Id);
         }
+
+        public void ExecuteStep()
+        {
+            // Start by executing resource that's a dependency but depend no one.
+            var freeResource =
+                _resources.FirstOrDefault(resource =>
+                    !resource.Dependecies.Any() &&
+                    _processes.Any(process => process.Dependecies.Any(dependency => dependency.Equals(resource.Id)))
+                );
+
+            if (freeResource != null)
+            {
+                // Remove those dependencies on free resource
+                _processes.ForEach((process) =>
+                {
+                    process.Dependecies.Remove(freeResource.Id);
+                });
+            }
+            else
+            {
+                // Then execute a process that's a dependency but depend no one.
+                var freeProcess =
+                    _processes.FirstOrDefault(process =>
+                        !process.Dependecies.Any() &&
+                        _resources.Any(resource => resource.Dependecies.Any(dependency => dependency.Equals(process.Id)))
+                    );
+
+                if (freeProcess != null)
+                {
+                    // Remove those dependencies on free process
+                    _resources.ForEach((resource) =>
+                    {
+                        resource.Dependecies.Remove(freeProcess.Id);
+                    });
+                }
+                else
+                {
+                    // TODO: execute who's a dependency and have dependencies
+                }
+            }
+        }
     }
 }
