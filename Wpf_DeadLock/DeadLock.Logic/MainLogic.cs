@@ -48,7 +48,7 @@ namespace DeadLock.Logic
         {
             ValidateDependencyEntities(processId, resourceId);
 
-            var dependency = new Dependency(processId, resourceId);
+            var dependency = new Dependency(resourceId, processId);
             _dependency.Add(dependency);
 
             return dependency.Id;
