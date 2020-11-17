@@ -76,7 +76,7 @@ namespace DeadLock.Logic
             }
         }
 
-        public void ExecuteStep()
+        public EStepStatus ExecuteStep()
         {
             if (_firstStep)
             {
@@ -132,12 +132,18 @@ namespace DeadLock.Logic
 
                         Notify(freeProcess.Id, EAction.UNLOCK);
                     }
+                    else if (_dependency.Any())
+                    {
+                        return EStepStatus.DEADLOCK;
+                    }
                     else
                     {
-                        // Check DEADLOCK or ended
+                        return EStepStatus.DONE;
                     }
                 }
             }
+
+            return EStepStatus.RUNNING;
         }
 
         public void AttachObserver(IObserver observer) => _subjectObserver.Attach(observer);
