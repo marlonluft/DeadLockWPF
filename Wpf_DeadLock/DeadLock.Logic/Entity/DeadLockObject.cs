@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DeadLock.Logic.Entity
 {
-    public abstract class DeadLockObject
+    internal abstract class DeadLockObject
     {
         public DeadLockObject()
         {

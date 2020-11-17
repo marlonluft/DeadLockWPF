@@ -2,7 +2,7 @@
 
 namespace DeadLock.Logic.Entity
 {
-    public class Resource : DeadLockObject
+    internal class Resource : DeadLockObject
     {
         public Resource(int quantityPoints) : base()
         {

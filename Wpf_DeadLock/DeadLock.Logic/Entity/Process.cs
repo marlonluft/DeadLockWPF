@@ -1,6 +1,6 @@
 ﻿namespace DeadLock.Logic.Entity
 {
-    public class Process : DeadLockObject
+    internal class Process : DeadLockObject
     {
     }
 }
