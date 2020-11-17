@@ -8,6 +8,7 @@ namespace DeadLock.Logic.Entity
         public DeadLockObject()
         {
             Id = Guid.NewGuid();
+            Dependecies = new List<Guid>();
         }
 
         public Guid Id { get; set; }
