@@ -102,11 +102,10 @@ namespace DeadLock.Logic
                     // Remove those dependencies on free resource
                     var dependecies = _dependency.Where(d => d.DependentId == freeResource.Id);
 
-                    foreach (var dependecy in dependecies)
+                    for (int i = dependecies.Count() - 1; i >= 0; i--)
                     {
-                        _dependency.Remove(dependecy);
-
-                        Notify(dependecy.Id, EAction.REMOVE);
+                        Notify(dependecies.ElementAt(i).Id, EAction.REMOVE);
+                        _dependency.RemoveAt(i);
                     }
 
                     Notify(freeResource.Id, EAction.UNLOCK);
@@ -125,11 +124,10 @@ namespace DeadLock.Logic
                         // Remove those dependencies on free process
                         var dependecies = _dependency.Where(d => d.DependentId == freeProcess.Id);
 
-                        foreach (var dependecy in dependecies)
+                        for (int i = dependecies.Count() - 1; i >= 0; i--)
                         {
-                            _dependency.Remove(dependecy);
-
-                            Notify(dependecy.Id, EAction.REMOVE);
+                            Notify(dependecies.ElementAt(i).Id, EAction.REMOVE);
+                            _dependency.RemoveAt(i);
                         }
 
                         Notify(freeProcess.Id, EAction.UNLOCK);
