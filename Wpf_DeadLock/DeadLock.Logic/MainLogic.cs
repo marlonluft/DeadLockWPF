@@ -1,5 +1,6 @@
 ﻿using DeadLock.Logic.Entity;
 using DeadLock.Logic.Exceptions;
+using DeadLock.Logic.Observer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,13 @@ namespace DeadLock.Logic
     {
         private List<Process> _processes;
         private List<Resource> _resources;
+        private Subject _subjectObserver;
 
         public MainLogic()
         {
             _processes = new List<Process>();
             _resources = new List<Resource>();
+            _subjectObserver = new Subject();
         }
 
         public Guid CreateProcess()
@@ -87,6 +90,9 @@ namespace DeadLock.Logic
                 {
                     process.Dependecies.Remove(freeResource.Id);
                 });
+
+                var updateParameter = new UpdateParameter(freeResource.Id, EAction.UNLOCK);
+                _subjectObserver.Notify(updateParameter);
             }
             else
             {
@@ -104,6 +110,9 @@ namespace DeadLock.Logic
                     {
                         resource.Dependecies.Remove(freeProcess.Id);
                     });
+
+                    var updateParameter = new UpdateParameter(freeProcess.Id, EAction.UNLOCK);
+                    _subjectObserver.Notify(updateParameter);
                 }
                 else
                 {
@@ -111,5 +120,8 @@ namespace DeadLock.Logic
                 }
             }
         }
+
+        public void AttachObserver(IObserver observer) => _subjectObserver.Attach(observer);
+        public void DetachObserver(IObserver observer) => _subjectObserver.Detach(observer);
     }
 }
