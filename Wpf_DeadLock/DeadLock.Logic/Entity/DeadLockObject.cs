@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DeadLock.Logic.Entity
 {
@@ -8,10 +7,8 @@ namespace DeadLock.Logic.Entity
         public DeadLockObject()
         {
             Id = Guid.NewGuid();
-            Dependecies = new List<Guid>();
         }
 
         public Guid Id { get; set; }
-        public List<Guid> Dependecies { get; set; }
     }
 }

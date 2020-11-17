@@ -11,13 +11,19 @@ namespace DeadLock.Logic
     {
         private List<Process> _processes;
         private List<Resource> _resources;
+        private List<Dependency> _dependency;
+        private bool _firstStep;
+
         private Subject _subjectObserver;
 
         public MainLogic()
         {
             _processes = new List<Process>();
             _resources = new List<Resource>();
+            _dependency = new List<Dependency>();
+
             _subjectObserver = new Subject();
+            _firstStep = true;
         }
 
         public Guid CreateProcess()
@@ -38,90 +44,110 @@ namespace DeadLock.Logic
             return newResource.Id;
         }
 
-        public void SetResourceDependency(Guid resourceId, Guid processId)
+        public Guid SetResourceDependency(Guid resourceId, Guid processId)
         {
-            var resource = _resources.FirstOrDefault(x => x.Id == resourceId);
-            var process = _processes.FirstOrDefault(x => x.Id == processId);
+            ValidateDependencyEntities(processId, resourceId);
 
-            if (resource == null)
-            {
-                throw new LogicException("Resource not found");
-            }
-            else if (process == null)
-            {
-                throw new LogicException("Process not found");
-            }
+            var dependency = new Dependency(processId, resourceId);
+            _dependency.Add(dependency);
 
-            resource.Dependecies.Add(process.Id);
+            return dependency.Id;
         }
 
-        public void SetProcessDependency(Guid processId, Guid resourceId)
+        public Guid SetProcessDependency(Guid processId, Guid resourceId)
         {
-            var resource = _resources.FirstOrDefault(x => x.Id == resourceId);
-            var process = _processes.FirstOrDefault(x => x.Id == processId);
+            ValidateDependencyEntities(processId, resourceId);
 
-            if (resource == null)
+            var dependency = new Dependency(processId, resourceId);
+            _dependency.Add(dependency);
+
+            return dependency.Id;
+        }
+
+        private void ValidateDependencyEntities(Guid processId, Guid resourceId)
+        {
+            if (!_resources.Any(x => x.Id == resourceId))
             {
                 throw new LogicException("Resource not found");
             }
-            else if (process == null)
+            else if (!_processes.Any(x => x.Id == processId))
             {
                 throw new LogicException("Process not found");
             }
-
-            resource.LockPoint();
-
-            process.Dependecies.Add(resource.Id);
         }
 
         public void ExecuteStep()
         {
-            // Start by executing resource that's a dependency but depend no one.
-            var freeResource =
-                _resources.FirstOrDefault(resource =>
-                    !resource.Dependecies.Any() &&
-                    _processes.Any(process => process.Dependecies.Any(dependency => dependency.Equals(resource.Id)))
-                );
-
-            if (freeResource != null)
+            if (_firstStep)
             {
-                // Remove those dependencies on free resource
-                _processes.ForEach((process) =>
+                foreach (var dependecy in _dependency)
                 {
-                    process.Dependecies.Remove(freeResource.Id);
-                });
+                    Notify(dependecy.Id, EAction.LOCK);
+                    Notify(dependecy.RecipientId, EAction.LOCK);
+                }
 
-                var updateParameter = new UpdateParameter(freeResource.Id, EAction.UNLOCK);
-                _subjectObserver.Notify(updateParameter);
+                _firstStep = false;
             }
             else
             {
-                // Then execute a process that's a dependency but depend no one.
-                var freeProcess =
-                    _processes.FirstOrDefault(process =>
-                        !process.Dependecies.Any() &&
-                        _resources.Any(resource => resource.Dependecies.Any(dependency => dependency.Equals(process.Id)))
+                // Start by executing resource that's a dependency but depend no one.
+                var freeResource =
+                    _resources.FirstOrDefault(resource =>
+                        _dependency.Any(d => d.DependentId == resource.Id) &&
+                        !_dependency.Any(r => r.RecipientId == resource.Id)
                     );
 
-                if (freeProcess != null)
+                if (freeResource != null)
                 {
-                    // Remove those dependencies on free process
-                    _resources.ForEach((resource) =>
-                    {
-                        resource.Dependecies.Remove(freeProcess.Id);
-                    });
+                    // Remove those dependencies on free resource
+                    var dependecies = _dependency.Where(d => d.DependentId == freeResource.Id);
 
-                    var updateParameter = new UpdateParameter(freeProcess.Id, EAction.UNLOCK);
-                    _subjectObserver.Notify(updateParameter);
+                    foreach (var dependecy in dependecies)
+                    {
+                        _dependency.Remove(dependecy);
+
+                        Notify(dependecy.Id, EAction.REMOVE);
+                    }
+
+                    Notify(freeResource.Id, EAction.UNLOCK);
                 }
                 else
                 {
-                    // TODO: execute who's a dependency and have dependencies
+                    // Then execute a process that's a dependency but depend no one.
+                    var freeProcess =
+                        _processes.FirstOrDefault(process =>
+                            _dependency.Any(d => d.DependentId == process.Id) &&
+                        !_dependency.Any(r => r.RecipientId == process.Id)
+                        );
+
+                    if (freeProcess != null)
+                    {
+                        // Remove those dependencies on free process
+                        var dependecies = _dependency.Where(d => d.DependentId == freeProcess.Id);
+
+                        foreach (var dependecy in dependecies)
+                        {
+                            _dependency.Remove(dependecy);
+
+                            Notify(dependecy.Id, EAction.REMOVE);
+                        }
+
+                        Notify(freeProcess.Id, EAction.UNLOCK);
+                    }
+                    else
+                    {
+                        // Check DEADLOCK or ended
+                    }
                 }
             }
         }
 
         public void AttachObserver(IObserver observer) => _subjectObserver.Attach(observer);
         public void DetachObserver(IObserver observer) => _subjectObserver.Detach(observer);
+
+        private void Notify(Guid id, EAction action)
+        {
+            _subjectObserver.Notify(new UpdateParameter(id, action));
+        }
     }
 }

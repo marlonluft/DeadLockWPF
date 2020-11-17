@@ -4,5 +4,6 @@
     {
         UNLOCK,
         LOCK,
+        REMOVE,
     }
 }
